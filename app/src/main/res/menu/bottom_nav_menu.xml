@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/home" android:title="Home" android:icon="@drawable/palace_svgrepo_com" />
+    <item android:id="@+id/trainingGround" android:title="Training Ground" android:icon="@drawable/stadium_svgrepo_com" />
+    <item android:id="@+id/battleArena" android:title="Battle Arena" android:icon="@drawable/sword_svgrepo_com" />
+</menu>
