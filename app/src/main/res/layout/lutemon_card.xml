@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:outlineSpotShadowColor="@color/black"
+    android:layout_margin="20dp"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="8dp" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp">
+
+        <ImageView
+            android:id="@+id/cardImageView"
+            android:layout_width="fill_parent"
+            android:layout_height="300dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/placeholder_image" />
+
+        <TextView
+            android:id="@+id/cardViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="TextView"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardImageView" />
+
+        <ImageView
+            android:id="@+id/cardImageViewAttack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardViewAttack"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewName"
+            app:srcCompat="@drawable/attack_svgrepo_com" />
+
+        <TextView
+            android:id="@+id/cardViewAttack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="TextView"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/cardImageViewHealth"
+            app:layout_constraintStart_toEndOf="@+id/cardImageViewAttack"
+            app:layout_constraintTop_toBottomOf="@id/cardViewName" />
+
+        <ImageView
+            android:id="@+id/cardImageViewHealth"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardViewHealth"
+            app:layout_constraintStart_toEndOf="@+id/cardViewAttack"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewName"
+            app:srcCompat="@drawable/health_svgrepo_com" />
+
+        <TextView
+            android:id="@+id/cardViewHealth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="TextView"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cardImageViewHealth"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewName" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

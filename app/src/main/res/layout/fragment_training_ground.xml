@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Training Ground Fragment"
         android:layout_gravity="center"
-        android:textColor="#FFFFFF"/>
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"/>
 
 </FrameLayout>
