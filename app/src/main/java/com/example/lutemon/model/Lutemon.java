@@ -10,8 +10,8 @@ public abstract class Lutemon {
     private int experience;
     private int currentHealth;
     private int maxHealth;
-    private int id;
     private String imageResource;
+    private String elementIconResource;
 
     public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, String imageResource) {
         this.name = name;
@@ -39,6 +39,18 @@ public abstract class Lutemon {
         return attackCount;
     }
 
+    public int getDefense() {
+        return defense;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
     public int getCurrentHealth() {
         return currentHealth;
     }
@@ -49,5 +61,49 @@ public abstract class Lutemon {
 
     public String getImageResource() {
         return imageResource;
+    }
+
+    public String getElementIconResource() {
+        return elementIconResource;
+    }
+
+    public void setAttackDice(int attackDice) {
+        this.attackDice = attackDice;
+    }
+
+    public void setElement(String element) {
+        this.element = element;
+    }
+
+    public void setAttackCount(int attackCount) {
+        this.attackCount = attackCount;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
+    public void setCurrentHealth(int currentHealth) {
+        this.currentHealth = currentHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public void setImageResource(String imageResource) {
+        this.imageResource = imageResource;
+    }
+
+    public void setElementIconResource(String elementIconResource) {
+        this.elementIconResource = elementIconResource;
     }
 }
