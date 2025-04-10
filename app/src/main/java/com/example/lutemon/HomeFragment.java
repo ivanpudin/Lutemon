@@ -3,6 +3,7 @@ package com.example.lutemon;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.lutemon.adapter.LutemonAdapter;
 import com.example.lutemon.model.Lutemon;
+import com.example.lutemon.model.LutemonStorage;
 import com.example.lutemon.model.Thunder;
 
 import java.util.ArrayList;
@@ -33,8 +35,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-
-        initializeData();
+        lutemons = LutemonStorage.getInstance().getLutemons();
 
         homeRecyclerView = rootView.findViewById(R.id.homeRecyclerView);
         missingDataTextView = rootView.findViewById(R.id.missingDataTextView);
@@ -43,7 +44,30 @@ public class HomeFragment extends Fragment {
         lutemonAdapter = new LutemonAdapter(getContext(), lutemons);
         homeRecyclerView.setAdapter(lutemonAdapter);
 
-        // Render TextView with missing data message in case lutemon list is empty
+        updateVisibility();
+
+        // Set up FloatingActionButton click listener
+        rootView.findViewById(R.id.addLutemonButton).setOnClickListener(v -> {
+            // int previousSize = LutemonStorage.getInstance().getLutemons().size();
+            LutemonStorage.getInstance().addLutemon(new Thunder("Thunder Lutemon", 8, 1, 40, "thunder_lutemon"));
+
+            // Refresh fragment after adding the lutemon
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frameLayout, new HomeFragment());
+            fragmentTransaction.commit();
+
+            // Does not update the recycler view for some reason...
+            // Refresh the RecyclerView data after adding the lutemon
+            // lutemons = LutemonStorage.getInstance().getLutemons();
+            // lutemonAdapter.notifyItemInserted(previousSize);
+            // lutemonAdapter.notifyDataSetChanged();
+        });
+
+        return rootView;
+    }
+
+    // Render TextView with missing data message in case lutemon list is empty
+    private void updateVisibility() {
         if (lutemons.isEmpty()) {
             homeRecyclerView.setVisibility(View.GONE);
             missingDataTextView.setVisibility(View.VISIBLE);
@@ -51,15 +75,5 @@ public class HomeFragment extends Fragment {
             homeRecyclerView.setVisibility(View.VISIBLE);
             missingDataTextView.setVisibility(View.GONE);
         }
-
-        return rootView;
-    }
-
-    private void initializeData() {
-        lutemons = new ArrayList<>();
-
-        lutemons.add(new Thunder("Thunder Lutemon", 8, 1, 40, "thunder_lutemon"));
-        lutemons.add(new Thunder("Thunder Lutemon", 8, 1, 40, "thunder_lutemon"));
-        lutemons.add(new Thunder("Thunder Lutemon", 8, 1, 40, "thunder_lutemon"));
     }
 }

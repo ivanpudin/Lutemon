@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.lutemon.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-
     ActivityMainBinding binding;
 
     @Override
@@ -20,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
 
+        // Switch between 3 main fragments through bottom nav menu
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
