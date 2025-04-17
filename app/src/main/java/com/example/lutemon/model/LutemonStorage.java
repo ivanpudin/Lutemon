@@ -27,6 +27,10 @@ public class LutemonStorage {
         return lutemons;
     }
 
+    public void setLutemons(ArrayList<Lutemon> newLutemons) {
+        lutemons = newLutemons;
+    }
+
     public void clearLutemons() {
         lutemons.clear();
     }

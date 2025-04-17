@@ -1,6 +1,8 @@
 package com.example.lutemon.model;
 
-public abstract class Lutemon {
+import java.io.Serializable;
+
+public abstract class Lutemon implements Serializable {
     private String name;
     private String element;
     private int attackDice;
@@ -13,7 +15,7 @@ public abstract class Lutemon {
     private String imageResource;
     private String elementIconResource;
 
-    public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, String imageResource) {
+    public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, String imageResource, String elementIconResource) {
         this.name = name;
         this.element = element;
         this.attackDice = attackDice;
@@ -21,6 +23,7 @@ public abstract class Lutemon {
         this.currentHealth = maxHealth;
         this.maxHealth = maxHealth;
         this.imageResource = imageResource;
+        this.elementIconResource = elementIconResource;
     }
 
     public String getName() {
