@@ -35,4 +35,30 @@
         app:fabSize="normal"
         android:contentDescription="Add Lutemon"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/saveLutemonsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/save_file_svgrepo_com"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="80dp"
+        android:elevation="24dp"
+        app:fabSize="normal"
+        android:contentDescription="Save Lutemons"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/loadLutemonsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/load_file_svgrepo_com"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="144dp"
+        android:elevation="24dp"
+        app:fabSize="normal"
+        android:contentDescription="Load Lutemons"/>
+
 </FrameLayout>

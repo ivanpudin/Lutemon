@@ -1,5 +1,6 @@
 package com.example.lutemon;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,16 +12,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lutemon.adapter.LutemonAdapter;
 import com.example.lutemon.model.Lutemon;
 import com.example.lutemon.model.LutemonStorage;
 import com.example.lutemon.model.Thunder;
+import com.example.lutemon.util.ErrorHandler;
+import com.example.lutemon.util.FileHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClickListener {
     private List<Lutemon> lutemons;
     private RecyclerView homeRecyclerView;
     private LutemonAdapter lutemonAdapter;
@@ -41,7 +45,7 @@ public class HomeFragment extends Fragment {
         missingDataTextView = rootView.findViewById(R.id.missingDataTextView);
 
         homeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        lutemonAdapter = new LutemonAdapter(getContext(), lutemons);
+        lutemonAdapter = new LutemonAdapter(getContext(), lutemons, this);
         homeRecyclerView.setAdapter(lutemonAdapter);
 
         updateVisibility();
@@ -63,6 +67,23 @@ public class HomeFragment extends Fragment {
             // lutemonAdapter.notifyDataSetChanged();
         });
 
+        rootView.findViewById(R.id.saveLutemonsButton).setOnClickListener(v -> {
+            FileHandler.saveLutemons(getContext(), new ArrayList<>(lutemons));
+            Toast.makeText(getContext(), "Lutemons saved successfully!", Toast.LENGTH_SHORT).show();
+        });
+
+        rootView.findViewById(R.id.loadLutemonsButton).setOnClickListener(v -> {
+            ArrayList<Lutemon> loadedLutemons = FileHandler.loadLutemons(getContext());
+            LutemonStorage.getInstance().setLutemons(loadedLutemons);
+
+            // Refresh fragment
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frameLayout, new HomeFragment());
+            fragmentTransaction.commit();
+
+            Toast.makeText(getContext(), "Lutemons loaded successfully!", Toast.LENGTH_SHORT).show();
+        });
+
         return rootView;
     }
 
@@ -74,6 +95,25 @@ public class HomeFragment extends Fragment {
         } else {
             homeRecyclerView.setVisibility(View.VISIBLE);
             missingDataTextView.setVisibility(View.GONE);
+        }
+    }
+
+    public void onItemClick(int position) {
+        try {
+            Lutemon lutemon = lutemonAdapter.getLutemon(position);
+            if (lutemon != null) {
+                // Launch detail activity
+                Intent intent = new Intent(requireContext(), LutemonStatisticActivity.class);
+                intent.putExtra(LutemonStatisticActivity.EXTRA_LUTEMON, lutemon);
+
+                startActivity(intent);
+            }
+        } catch (Exception e) {
+            ErrorHandler.handleError(
+                    requireContext(),
+                    e,
+                    "Failed to open item details. Please try again."
+            );
         }
     }
 }

@@ -18,11 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonViewHolder> {
+    // Interface for item click handling
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
     private final Context context;
     private final List<Lutemon> lutemons;
+    private final OnItemClickListener listener;
 
-    public LutemonAdapter(Context context, List<Lutemon> lutemonsList) {
+    public LutemonAdapter(Context context, List<Lutemon> lutemonsList, OnItemClickListener listener) {
         this.context = context;
+        this.listener = listener;
         this.lutemons = new ArrayList<>();
 
         lutemons.addAll(lutemonsList);
@@ -34,7 +41,7 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         View view = inflater.inflate(R.layout.lutemon_card, parent, false);
-        return new LutemonViewHolder(view);
+        return new LutemonViewHolder(view, listener);
     }
 
     @Override
@@ -72,17 +79,35 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
         return lutemons != null ? lutemons.size() : 0;
     }
 
+    public Lutemon getLutemon(int position) {
+        if (position >= 0 && position < lutemons.size() && lutemons.get(position) instanceof Lutemon) {
+            return (Lutemon) lutemons.get(position);
+        }
+        return null;
+    }
+
     public static class LutemonViewHolder extends RecyclerView.ViewHolder {
         private final ImageView cardImageView;
         private final TextView cardViewAttack, cardViewHealth, cardViewName;
 
-        public LutemonViewHolder(@NonNull View itemView) {
+        public LutemonViewHolder(@NonNull View itemView, final LutemonAdapter.OnItemClickListener listener) {
             super(itemView);
 
             cardImageView = itemView.findViewById(R.id.cardImageView);
             cardViewAttack = itemView.findViewById(R.id.cardViewAttack);
             cardViewHealth = itemView.findViewById(R.id.cardViewHealth);
             cardViewName = itemView.findViewById(R.id.cardViewName);
+
+            // Set click listener for the entire item
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onItemClick(position);
+                    }
+                }
+            });
         }
 
         public ImageView getCardImageView() {
