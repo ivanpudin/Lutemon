@@ -18,6 +18,7 @@
             android:id="@+id/cardImageView"
             android:layout_width="fill_parent"
             android:layout_height="300dp"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -39,8 +40,8 @@
             android:id="@+id/cardImageViewAttack"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/cardViewAttack"
+            android:layout_marginTop="25dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardImageViewHealth"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardViewName"
             app:srcCompat="@drawable/attack_svgrepo_com" />
@@ -49,20 +50,21 @@
             android:id="@+id/cardViewAttack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="TextView"
+            android:layout_marginTop="10dp"
+            android:text="-"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/cardImageViewHealth"
-            app:layout_constraintStart_toEndOf="@+id/cardImageViewAttack"
-            app:layout_constraintTop_toBottomOf="@id/cardViewName" />
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/cardImageViewAttack"
+            app:layout_constraintStart_toStartOf="@+id/cardImageViewAttack"
+            app:layout_constraintTop_toBottomOf="@+id/cardImageViewAttack" />
 
         <ImageView
             android:id="@+id/cardImageViewHealth"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/cardViewHealth"
-            app:layout_constraintStart_toEndOf="@+id/cardViewAttack"
+            android:layout_marginTop="25dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardImageViewDefence"
+            app:layout_constraintStart_toEndOf="@+id/cardImageViewAttack"
             app:layout_constraintTop_toBottomOf="@+id/cardViewName"
             app:srcCompat="@drawable/health_svgrepo_com" />
 
@@ -70,12 +72,57 @@
             android:id="@+id/cardViewHealth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="TextView"
+            android:layout_marginTop="10dp"
+            android:text="-"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/cardImageViewHealth"
+            app:layout_constraintStart_toStartOf="@+id/cardImageViewHealth"
+            app:layout_constraintTop_toBottomOf="@+id/cardImageViewHealth" />
+
+        <ImageView
+            android:id="@+id/cardImageViewDefence"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="25dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardImageViewExp"
             app:layout_constraintStart_toEndOf="@+id/cardImageViewHealth"
-            app:layout_constraintTop_toBottomOf="@+id/cardViewName" />
+            app:layout_constraintTop_toBottomOf="@+id/cardViewName"
+            app:srcCompat="@drawable/shield_svgrepo_com" />
+
+        <ImageView
+            android:id="@+id/cardImageViewExp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cardImageViewDefence"
+            app:layout_constraintTop_toBottomOf="@+id/cardViewName"
+            app:srcCompat="@drawable/exp_svgrepo_com" />
+
+        <TextView
+            android:id="@+id/cardViewDefence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="-"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/cardImageViewDefence"
+            app:layout_constraintStart_toStartOf="@+id/cardImageViewDefence"
+            app:layout_constraintTop_toBottomOf="@+id/cardImageViewDefence" />
+
+        <TextView
+            android:id="@+id/cardViewExp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="-"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/cardImageViewExp"
+            app:layout_constraintStart_toStartOf="@+id/cardImageViewExp"
+            app:layout_constraintTop_toBottomOf="@+id/cardImageViewExp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/statisticScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".LutemonStatisticActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="50dp">
+
+            <ImageView
+                android:id="@+id/statisticViewImage"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:contentDescription="Lutemon Image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_image" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:rowCount="2"
+                android:columnCount="4"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp">
+
+                <ImageView
+                    android:id="@+id/statisticViewImageAttack"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/attack_svgrepo_com"
+                    android:scaleType="centerCrop"
+                    android:layout_columnWeight="1"
+                    android:contentDescription="Image 1" />
+
+                <ImageView
+                    android:id="@+id/statisticViewImageHealth"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/health_svgrepo_com"
+                    android:scaleType="centerCrop"
+                    android:layout_columnWeight="1"
+                    android:contentDescription="Image 2" />
+
+                <ImageView
+                    android:id="@+id/statisticViewImageDefence"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/shield_svgrepo_com"
+                    android:scaleType="centerCrop"
+                    android:layout_columnWeight="1"
+                    android:contentDescription="Image 3" />
+
+                <ImageView
+                    android:id="@+id/statisticViewImageExp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/exp_svgrepo_com"
+                    android:scaleType="centerCrop"
+                    android:layout_columnWeight="1"
+                    android:contentDescription="Image 4" />
+
+                <TextView
+                    android:id="@+id/statisticViewAttack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:id="@+id/statisticViewHealth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:id="@+id/statisticViewDefence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:id="@+id/statisticViewExp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp" />
+
+            </GridLayout>
+
+            <TextView
+                android:id="@+id/statisticViewText1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ability 1"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="start"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp" />
+
+            <TextView
+                android:id="@+id/statisticViewText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore."
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:id="@+id/statisticViewText3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ability 1"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="start"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp" />
+
+            <TextView
+                android:id="@+id/statisticViewText4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore."
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/statisticViewBackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/back_svgrepo_com"
+        android:layout_gravity="top|start"
+        android:layout_margin="16dp"
+        android:elevation="24dp"
+        app:fabSize="normal"
+        android:contentDescription="Back to lutemon list" />
+</FrameLayout>
