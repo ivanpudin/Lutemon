@@ -67,7 +67,19 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
                 // if all failed, set default background image to some color
                 holder.getCardImageView().setBackgroundColor(
                         context.getResources().getColor(android.R.color.darker_gray));
-                ErrorHandler.logError("Lutemon", "Error loading image", e);
+                ErrorHandler.logError("Lutemon", "Error loading card image", e);
+            }
+
+            try {
+                // Try to find image, if failed set placeholder image from local res/drawable
+                int imageResourceId = ErrorHandler.getDrawableResourceId(
+                        context, lutemon.getElementIconResource(), R.drawable.element_not_found);
+                holder.getCardImageViewElement().setImageResource(imageResourceId);
+            } catch (Exception e) {
+                // if all failed, set default background image to some color
+                holder.getCardImageViewElement().setBackgroundColor(
+                        context.getResources().getColor(android.R.color.darker_gray));
+                ErrorHandler.logError("Lutemon", "Error loading element icon", e);
             }
         } catch (Exception e) {
             ErrorHandler.logError("LutemonAdapter", "Error binding view at position " + position, e);
@@ -87,13 +99,14 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
     }
 
     public static class LutemonViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView cardImageView;
+        private final ImageView cardImageView, cardImageViewElement;
         private final TextView cardViewAttack, cardViewHealth, cardViewName;
 
         public LutemonViewHolder(@NonNull View itemView, final LutemonAdapter.OnItemClickListener listener) {
             super(itemView);
 
             cardImageView = itemView.findViewById(R.id.cardImageView);
+            cardImageViewElement = itemView.findViewById(R.id.cardImageViewElement);
             cardViewAttack = itemView.findViewById(R.id.cardViewAttack);
             cardViewHealth = itemView.findViewById(R.id.cardViewHealth);
             cardViewName = itemView.findViewById(R.id.cardViewName);
@@ -112,6 +125,10 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
 
         public ImageView getCardImageView() {
             return cardImageView;
+        }
+
+        public ImageView getCardImageViewElement() {
+            return cardImageViewElement;
         }
 
         public TextView getCardViewAttack() {

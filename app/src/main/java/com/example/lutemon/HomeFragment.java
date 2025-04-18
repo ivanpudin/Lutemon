@@ -23,12 +23,25 @@ import com.example.lutemon.util.FileHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import android.app.Activity;
 
 public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClickListener {
     private List<Lutemon> lutemons;
     private RecyclerView homeRecyclerView;
     private LutemonAdapter lutemonAdapter;
     private TextView missingDataTextView;
+    private final ActivityResultLauncher<Intent> detailLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    // Refresh the lutemon list and adapter after deletion
+                    lutemons = LutemonStorage.getInstance().getLutemons();
+                    lutemonAdapter = new LutemonAdapter(getContext(), lutemons, this);
+                    homeRecyclerView.setAdapter(lutemonAdapter);
+                    updateVisibility();
+                }
+            });
 
     public HomeFragment() {
         // Required empty public constructor
@@ -106,7 +119,7 @@ public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClick
                 Intent intent = new Intent(requireContext(), LutemonStatisticActivity.class);
                 intent.putExtra(LutemonStatisticActivity.EXTRA_LUTEMON, lutemon);
 
-                startActivity(intent);
+                detailLauncher.launch(intent);
             }
         } catch (Exception e) {
             ErrorHandler.handleError(

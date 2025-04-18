@@ -1,5 +1,6 @@
 package com.example.lutemon.model;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,15 +24,25 @@ public class LutemonStorage {
         lutemons.add(lutemon);
     }
 
+    public void removeLutemonById(int id) {
+        lutemons.removeIf(l -> l.getId() == id);
+    }
+
     public List<Lutemon> getLutemons() {
         return lutemons;
     }
 
     public void setLutemons(ArrayList<Lutemon> newLutemons) {
         lutemons = newLutemons;
-    }
 
-    public void clearLutemons() {
-        lutemons.clear();
+        // Reset nextId to avoid ID collisions
+        int maxId = newLutemons.stream().mapToInt(Lutemon::getId).max().orElse(0);
+        try {
+            Field nextIdField = Lutemon.class.getDeclaredField("nextId");
+            nextIdField.setAccessible(true);
+            nextIdField.setInt(null, maxId + 1);
+        } catch (Exception e) {
+            e.printStackTrace(); // Log
+        }
     }
 }
