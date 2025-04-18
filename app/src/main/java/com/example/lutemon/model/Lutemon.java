@@ -18,16 +18,18 @@ public abstract class Lutemon implements Serializable {
     private String imageResource;
     private String elementIconResource;
 
-    public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, String imageResource, String elementIconResource) {
+    public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, int defense, String imageResource, String elementIconResource) {
         this.id = nextId++;
         this.name = name;
         this.element = element;
         this.attackDice = attackDice;
         this.attackCount = attackCount;
         this.currentHealth = maxHealth;
+        this.defense = defense;
         this.maxHealth = maxHealth;
         this.imageResource = imageResource;
         this.elementIconResource = elementIconResource;
+        this.experience = 0;
     }
 
     public int getId() {

@@ -57,6 +57,9 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
             String currentHealth = lutemon.getCurrentHealth() + "/" + lutemon.getMaxHealth();
             holder.getCardViewHealth().setText(currentHealth);
 
+            holder.getCardViewDefence().setText(String.valueOf(lutemon.getDefense()));
+            holder.getCardViewExp().setText(String.valueOf(lutemon.getExperience()));
+
             // Image handling
             try {
                 // Try to find image, if failed set placeholder image from local res/drawable
@@ -100,7 +103,7 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
 
     public static class LutemonViewHolder extends RecyclerView.ViewHolder {
         private final ImageView cardImageView, cardImageViewElement;
-        private final TextView cardViewAttack, cardViewHealth, cardViewName;
+        private final TextView cardViewAttack, cardViewHealth, cardViewName, cardViewDefence, cardViewExp;
 
         public LutemonViewHolder(@NonNull View itemView, final LutemonAdapter.OnItemClickListener listener) {
             super(itemView);
@@ -110,6 +113,8 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
             cardViewAttack = itemView.findViewById(R.id.cardViewAttack);
             cardViewHealth = itemView.findViewById(R.id.cardViewHealth);
             cardViewName = itemView.findViewById(R.id.cardViewName);
+            cardViewDefence = itemView.findViewById(R.id.cardViewDefence);
+            cardViewExp = itemView.findViewById(R.id.cardViewExp);
 
             // Set click listener for the entire item
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +146,14 @@ public class LutemonAdapter extends RecyclerView.Adapter<LutemonAdapter.LutemonV
 
         public TextView getCardViewName() {
             return cardViewName;
+        }
+
+        public TextView getCardViewExp() {
+            return cardViewExp;
+        }
+
+        public TextView getCardViewDefence() {
+            return cardViewDefence;
         }
     }
 }

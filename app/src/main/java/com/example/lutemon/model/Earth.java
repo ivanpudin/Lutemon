@@ -1,7 +1,7 @@
 package com.example.lutemon.model;
 
 public class Earth extends Lutemon {
-    public Earth(String name, int attackDice, int attackCount, int maxHealth, String imageResource) {
-        super(name, "Earth", attackDice, attackCount, maxHealth, imageResource, "element_earth");
+    public Earth(String name, int attackDice, int attackCount, int maxHealth, int defense, String imageResource) {
+        super(name, "Earth", attackDice, attackCount, maxHealth, defense, imageResource, "element_earth");
     }
 }
