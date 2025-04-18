@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClick
     private RecyclerView homeRecyclerView;
     private LutemonAdapter lutemonAdapter;
     private TextView missingDataTextView;
-    private final ActivityResultLauncher<Intent> detailLauncher =
+    private final ActivityResultLauncher<Intent> customLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     // Refresh the lutemon list and adapter after deletion
@@ -65,19 +65,9 @@ public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClick
 
         // Set up FloatingActionButton click listener
         rootView.findViewById(R.id.addLutemonButton).setOnClickListener(v -> {
-            // int previousSize = LutemonStorage.getInstance().getLutemons().size();
-            LutemonStorage.getInstance().addLutemon(new Thunder("Thunder Lutemon", 8, 1, 40, "thunder_lutemon"));
+            Intent intent = new Intent(getContext(), AddLutemonActivity.class);
 
-            // Refresh fragment after adding the lutemon
-            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.frameLayout, new HomeFragment());
-            fragmentTransaction.commit();
-
-            // Does not update the recycler view for some reason...
-            // Refresh the RecyclerView data after adding the lutemon
-            // lutemons = LutemonStorage.getInstance().getLutemons();
-            // lutemonAdapter.notifyItemInserted(previousSize);
-            // lutemonAdapter.notifyDataSetChanged();
+            customLauncher.launch(intent);
         });
 
         rootView.findViewById(R.id.saveLutemonsButton).setOnClickListener(v -> {
@@ -119,7 +109,7 @@ public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClick
                 Intent intent = new Intent(requireContext(), LutemonStatisticActivity.class);
                 intent.putExtra(LutemonStatisticActivity.EXTRA_LUTEMON, lutemon);
 
-                detailLauncher.launch(intent);
+                customLauncher.launch(intent);
             }
         } catch (Exception e) {
             ErrorHandler.handleError(

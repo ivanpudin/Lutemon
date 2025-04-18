@@ -18,6 +18,11 @@
             android:label="@string/title_activity_lutemon_statistic"
             android:theme="@style/Theme.Lutemon.NoActionBar" />
         <activity
+            android:name=".AddLutemonActivity"
+            android:exported="false"
+            android:label="AddLutemonActivity"
+            android:theme="@style/Theme.Lutemon.NoActionBar" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
