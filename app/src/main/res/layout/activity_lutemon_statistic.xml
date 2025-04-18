@@ -26,6 +26,26 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/placeholder_image" />
 
+            <ImageView
+                android:id="@+id/statisticViewElement"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:contentDescription="Lutemon Image"
+                android:src="@drawable/placeholder_image"
+                app:srcCompat="@drawable/element_not_found" />
+
+            <TextView
+                android:id="@+id/statisticViewName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lutemon Name"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp" />
+
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -185,4 +205,18 @@
         android:elevation="24dp"
         app:fabSize="normal"
         android:contentDescription="Back to lutemon list" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/statisticViewDeleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/delete"
+        app:tint="#D70040"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:elevation="24dp"
+        app:fabSize="normal"
+        android:contentDescription="Delete lutemon" />
+
 </FrameLayout>
