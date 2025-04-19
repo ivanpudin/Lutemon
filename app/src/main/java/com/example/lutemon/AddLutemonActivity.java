@@ -57,7 +57,6 @@ public class AddLutemonActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Check which radio button is selected
                 int selectedElementId = elementRadioGroup.getCheckedRadioButtonId();
                 if (selectedElementId == -1) {
                     // If no element is selected
@@ -69,7 +68,6 @@ public class AddLutemonActivity extends AppCompatActivity {
                 RadioButton selectedRadioButton = findViewById(selectedElementId);
                 String selectedElement = selectedRadioButton.getText().toString();
 
-                // Call the corresponding class based on the selected element
                 try {
                     callElementMethod(selectedElement, lutemonName);
                     LutemonStorage.getInstance().addLutemon(lutemon);
@@ -84,7 +82,6 @@ public class AddLutemonActivity extends AppCompatActivity {
         });
     }
 
-    // Call the designated class method based on selected element
     private void callElementMethod(String element, String lutemonName) {
         switch (element) {
             case "Fire":

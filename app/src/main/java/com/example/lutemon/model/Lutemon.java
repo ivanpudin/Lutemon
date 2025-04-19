@@ -1,10 +1,19 @@
 package com.example.lutemon.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Lutemon implements Serializable {
+    public interface TrainingCostChangeListener {
+        void onTrainingCostChanged(int newTrainingCost);
+    }
+
     private static int nextId = 0;
 
+    private final int baseMaxHealth; // Remember initial stats before leveling, used for proper scaling
+    private final int baseAttackDice;
+    private final int baseDefense;
     private final int id;
     private String name;
     private String element;
@@ -17,9 +26,15 @@ public abstract class Lutemon implements Serializable {
     private int maxHealth;
     private String imageResource;
     private String elementIconResource;
+    private int trainingCost;
+
+    private List<TrainingCostChangeListener> trainingCostListeners = new ArrayList<>();
 
     public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, int defense, String imageResource, String elementIconResource) {
         this.id = nextId++;
+        this.baseMaxHealth = maxHealth;
+        this.baseAttackDice = attackDice;
+        this.baseDefense = defense;
         this.name = name;
         this.element = element;
         this.attackDice = attackDice;
@@ -30,6 +45,7 @@ public abstract class Lutemon implements Serializable {
         this.imageResource = imageResource;
         this.elementIconResource = elementIconResource;
         this.experience = 0;
+        this.trainingCost = 100;
     }
 
     public int getId() {
@@ -118,5 +134,42 @@ public abstract class Lutemon implements Serializable {
 
     public void setElementIconResource(String elementIconResource) {
         this.elementIconResource = elementIconResource;
+    }
+
+    public void increaseTrainingCost() {
+        trainingCost = trainingCost + 100;
+        notifyTrainingCostChanged();
+    }
+
+    public int getTrainingCost() {
+        return trainingCost;
+    }
+
+    private void notifyTrainingCostChanged() {
+        for (TrainingCostChangeListener listener : trainingCostListeners) {
+            listener.onTrainingCostChanged(trainingCost);
+        }
+    }
+
+    public void addTrainingCostChangeListener(TrainingCostChangeListener listener) {
+        if (!trainingCostListeners.contains(listener)) {
+            trainingCostListeners.add(listener);
+        }
+    }
+
+    public void heal() {
+        setCurrentHealth(maxHealth);
+    }
+
+    public int getBaseMaxHealth() {
+        return baseMaxHealth;
+    }
+
+    public int getBaseAttackDice() {
+        return baseAttackDice;
+    }
+
+    public int getBaseDefense() {
+        return baseDefense;
     }
 }
