@@ -1,4 +1,5 @@
 package com.example.lutemon.model;
+import com.example.lutemon.model.LevelingSystem;
 
 public class LevelingSystem {
 
