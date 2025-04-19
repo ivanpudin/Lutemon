@@ -17,9 +17,9 @@ import android.widget.Toast;
 
 public class LutemonStatisticActivity extends AppCompatActivity {
     // Intent extras
-    public static final String EXTRA_LUTEMON = "extra_lutemon";
+    public static final String EXTRA_LUTEMON_ID = "extra_lutemon_id";
     private ImageView statisticViewImage, statisticViewElement;
-    private TextView statisticViewName, statisticViewAttack, statisticViewHealth;
+    private TextView statisticViewName, statisticViewAttack, statisticViewHealth, statisticViewDefence, statisticViewExp;
     private FloatingActionButton backButton, deleteButton;
     private Lutemon lutemon;
 
@@ -32,6 +32,8 @@ public class LutemonStatisticActivity extends AppCompatActivity {
         statisticViewName = findViewById(R.id.statisticViewName);
         statisticViewAttack = findViewById(R.id.statisticViewAttack);
         statisticViewHealth = findViewById(R.id.statisticViewHealth);
+        statisticViewDefence = findViewById(R.id.statisticViewDefence);
+        statisticViewExp = findViewById(R.id.statisticViewExp);
         backButton = findViewById(R.id.statisticViewBackButton);
         deleteButton = findViewById(R.id.statisticViewDeleteButton);
 
@@ -59,12 +61,14 @@ public class LutemonStatisticActivity extends AppCompatActivity {
 
     private void displayLutemonDetails() {
         try {
-            // Get lutemon from the intent
-            lutemon = (Lutemon) getIntent().getSerializableExtra(EXTRA_LUTEMON);
-
-            if (lutemon == null) {
-                throw new IllegalArgumentException("Lutemon not found");
+            // Get Lutemon ID from the intent
+            int lutemonId = getIntent().getIntExtra(EXTRA_LUTEMON_ID, -1);
+            if (lutemonId == -1) {
+                throw new IllegalArgumentException("Lutemon ID not found");
             }
+
+            // Find the Lutemon using the ID
+            lutemon = LutemonStorage.getInstance().getLutemonById(lutemonId);
 
             // Display lutemon details
             statisticViewName.setText(lutemon.getName());
@@ -72,6 +76,8 @@ public class LutemonStatisticActivity extends AppCompatActivity {
             statisticViewAttack.setText(attackDice);
             String currentHealth = lutemon.getCurrentHealth() + "/" + lutemon.getMaxHealth();
             statisticViewHealth.setText(currentHealth);
+            statisticViewDefence.setText(String.valueOf(lutemon.getDefense()));
+            statisticViewExp.setText(String.valueOf(lutemon.getExperience()));
 
             // Load image
             try {

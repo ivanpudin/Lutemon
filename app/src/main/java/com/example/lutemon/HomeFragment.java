@@ -111,7 +111,7 @@ public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClick
             if (lutemon != null) {
                 // Launch detail activity
                 Intent intent = new Intent(requireContext(), LutemonStatisticActivity.class);
-                intent.putExtra(LutemonStatisticActivity.EXTRA_LUTEMON, lutemon);
+                intent.putExtra(LutemonStatisticActivity.EXTRA_LUTEMON_ID, lutemon.getId());
 
                 customLauncher.launch(intent);
             }
