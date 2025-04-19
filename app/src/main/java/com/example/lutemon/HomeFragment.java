@@ -15,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.lutemon.adapter.LutemonAdapter;
+import com.example.lutemon.model.CurrencyManager;
 import com.example.lutemon.model.Lutemon;
+import com.example.lutemon.model.LutemonSaveData;
 import com.example.lutemon.model.LutemonStorage;
 import com.example.lutemon.model.Thunder;
 import com.example.lutemon.util.ErrorHandler;
@@ -71,20 +73,22 @@ public class HomeFragment extends Fragment implements LutemonAdapter.OnItemClick
         });
 
         rootView.findViewById(R.id.saveLutemonsButton).setOnClickListener(v -> {
-            FileHandler.saveLutemons(getContext(), new ArrayList<>(lutemons));
-            Toast.makeText(getContext(), "Lutemons saved successfully!", Toast.LENGTH_SHORT).show();
+            LutemonSaveData saveData = new LutemonSaveData(
+                    new ArrayList<>(lutemons),
+                    CurrencyManager.getInstance().getCurrency()
+            );
+            FileHandler.saveLutemonsAndCurrency(getContext(), saveData);
         });
 
         rootView.findViewById(R.id.loadLutemonsButton).setOnClickListener(v -> {
-            ArrayList<Lutemon> loadedLutemons = FileHandler.loadLutemons(getContext());
-            LutemonStorage.getInstance().setLutemons(loadedLutemons);
+            LutemonSaveData loadedData = FileHandler.loadLutemonsAndCurrency(getContext());
+            LutemonStorage.getInstance().setLutemons(new ArrayList<>(loadedData.getLutemons()));
+            CurrencyManager.getInstance().setCurrency(loadedData.getCurrency());
 
             // Refresh fragment
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.frameLayout, new HomeFragment());
             fragmentTransaction.commit();
-
-            Toast.makeText(getContext(), "Lutemons loaded successfully!", Toast.LENGTH_SHORT).show();
         });
 
         return rootView;
