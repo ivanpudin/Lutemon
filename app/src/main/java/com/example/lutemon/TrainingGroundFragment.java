@@ -1,64 +1,110 @@
 package com.example.lutemon;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link TrainingGroundFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.lutemon.adapter.LutemonRadioAdapter;
+import com.example.lutemon.model.CurrencyManager;
+import com.example.lutemon.model.LevelingSystem;
+import com.example.lutemon.model.Lutemon;
+import com.example.lutemon.model.LutemonStorage;
+
+import java.util.List;
+
 public class TrainingGroundFragment extends Fragment {
+    private List<Lutemon> lutemons;
+    private RecyclerView trainingGroundRecyclerView;
+    private LutemonRadioAdapter lutemonRadioAdapter;
+    private Button trainLutemonButton;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Lutemon selectedLutemon; // Track selected Lutemon
 
     public TrainingGroundFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TrainingGroundFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TrainingGroundFragment newInstance(String param1, String param2) {
-        TrainingGroundFragment fragment = new TrainingGroundFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_training_ground, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_training_ground, container, false);
+        lutemons = LutemonStorage.getInstance().getLutemons();
+
+        trainingGroundRecyclerView = rootView.findViewById(R.id.trainingGroundRecyclerView);
+        trainLutemonButton = rootView.findViewById(R.id.trainLutemonButton);
+
+        trainingGroundRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        lutemonRadioAdapter = new LutemonRadioAdapter(getContext(), lutemons);
+        trainingGroundRecyclerView.setAdapter(lutemonRadioAdapter);
+
+        // Set listener for Lutemon selection
+        lutemonRadioAdapter.setOnLutemonSelectedListener(lutemon -> {
+            selectedLutemon = lutemon;
+            updateTrainButton(selectedLutemon);
+
+            // Add listener to update training cost when it changes
+            selectedLutemon.addTrainingCostChangeListener(new Lutemon.TrainingCostChangeListener() {
+                @Override
+                public void onTrainingCostChanged(int newTrainingCost) {
+                    updateTrainButton(selectedLutemon);  // Update the button when the training cost changes
+                }
+            });
+        });
+
+        trainLutemonButton.setOnClickListener(v -> {
+            if (selectedLutemon != null) {
+                CurrencyManager currencyManager = CurrencyManager.getInstance();
+                int currentCurrency = currencyManager.getCurrency();
+                int trainingCost = selectedLutemon.getTrainingCost();
+
+                if (currentCurrency >= trainingCost) {
+                    currencyManager.subtractCurrency(trainingCost);
+                    LevelingSystem.rewardTraining(selectedLutemon);
+
+                    // After training, update the button text and training cost
+                    updateTrainButton(selectedLutemon);
+
+                    Toast.makeText(getContext(), "Trained: " + selectedLutemon.getName(), Toast.LENGTH_SHORT).show();
+                } else {
+                    // Not enough currency
+                    Toast.makeText(getContext(), "Not enough currency to train Lutemon.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // No Lutemon selected
+                Toast.makeText(getContext(), "Please select a Lutemon to train!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return rootView;
+    }
+
+    // Method to update the button text and icon based on the selected Lutemon's training cost
+    private void updateTrainButton(Lutemon selectedLutemon) {
+        // Set the button text to the current training cost of the selected Lutemon
+        trainLutemonButton.setText("Train Lutemon (" + selectedLutemon.getTrainingCost() + ")");
+
+        // Set the coin icon next to the button text
+        Drawable coinIcon = ContextCompat.getDrawable(requireContext(), R.drawable.coin_svgrepo_com);
+        if (coinIcon != null) {
+            int sizeInDp = 24;
+            int sizeInPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    sizeInDp,
+                    getResources().getDisplayMetrics()
+            );
+            coinIcon.setBounds(0, 0, sizeInPx, sizeInPx);
+            trainLutemonButton.setCompoundDrawables(coinIcon, null, null, null);
+            trainLutemonButton.setCompoundDrawablePadding(16); // Space between icon and text
+        }
     }
 }
