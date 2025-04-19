@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.example.lutemon.databinding.ActivityMainBinding;
 import com.example.lutemon.model.CurrencyManager;
-import com.example.lutemon.model.LutemonStorage;
 
 public class MainActivity extends AppCompatActivity implements CurrencyManager.CurrencyChangeListener {
     ActivityMainBinding binding;
