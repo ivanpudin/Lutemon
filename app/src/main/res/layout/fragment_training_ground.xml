@@ -6,13 +6,23 @@
     tools:context=".TrainingGroundFragment"
     android:background="#6135b8">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Training Ground Fragment"
-        android:layout_gravity="center"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"/>
 
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trainingGroundRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"/>
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/trainLutemonButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Train Lutemon"
+        android:layout_gravity="bottom|center"/>
 </FrameLayout>

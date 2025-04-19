@@ -6,7 +6,7 @@ import java.util.List;
 // Class to hold and dynamically update app currency
 public class CurrencyManager {
     private static CurrencyManager instance;
-    private int currency = 100;
+    private int currency = 1000;
 
     public interface CurrencyChangeListener {
         void onCurrencyChanged(int newCurrency);
