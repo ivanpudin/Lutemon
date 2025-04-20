@@ -3,6 +3,7 @@ package com.example.lutemon.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.lutemon.model.CurrencyManager;
 
 public abstract class Lutemon implements Serializable {
     public interface TrainingCostChangeListener {
@@ -29,7 +30,10 @@ public abstract class Lutemon implements Serializable {
     private int trainingCost;
     private int wins;
     private int losses;
+    private int trainingStat;
     private List<TrainingCostChangeListener> trainingCostListeners = new ArrayList<>();
+    CurrencyManager currencyManager = CurrencyManager.getInstance();
+
 
     public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, int defense, String imageResource, String elementIconResource) {
         this.id = nextId++;
@@ -49,6 +53,7 @@ public abstract class Lutemon implements Serializable {
         this.trainingCost = 100;
         this.wins = 0;
         this.losses = 0;
+        this.trainingStat = 0;
     }
 
     public int getId() {
@@ -143,6 +148,17 @@ public abstract class Lutemon implements Serializable {
         this.elementIconResource = elementIconResource;
     }
 
+    public void won() {
+        wins++;
+        heal();
+        currencyManager.addCurrency(125);
+    }
+
+    public void lost() {
+        losses++;
+        heal();
+    }
+
     public void increaseTrainingCost() {
         trainingCost = trainingCost + 100;
         notifyTrainingCostChanged();
@@ -167,6 +183,7 @@ public abstract class Lutemon implements Serializable {
     public void heal() {
         setCurrentHealth(maxHealth);
     }
+    public void incTrainingStat() { trainingStat++; }
 
     public int getBaseMaxHealth() {
         return baseMaxHealth;
@@ -179,4 +196,5 @@ public abstract class Lutemon implements Serializable {
     public int getBaseDefense() {
         return baseDefense;
     }
+    public int getTrainingStat() { return trainingStat; }
 }

@@ -191,6 +191,69 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp" />
 
+
+            <TextView
+                android:id="@+id/winsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:text="Wins:"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/statisticViewWins"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="0"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/lossesText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:text="Losses:"
+                android:layout_marginTop="10dp"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/statisticViewLosses"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="0"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/trainingsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Trainings:"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/statisticViewTrainings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="16sp"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp" />
+
         </LinearLayout>
     </ScrollView>
 
@@ -218,5 +281,7 @@
         android:elevation="24dp"
         app:fabSize="normal"
         android:contentDescription="Delete lutemon" />
+
+
 
 </FrameLayout>
