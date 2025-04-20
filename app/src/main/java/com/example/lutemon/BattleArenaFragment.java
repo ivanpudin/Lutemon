@@ -581,8 +581,8 @@ public class BattleArenaFragment extends Fragment {
         int playerImageRes = getResources().getIdentifier(playerLutemon.getImageResource(), "drawable", requireContext().getPackageName());
         int enemyImageRes = getResources().getIdentifier(enemyLutemon.getImageResource(), "drawable", requireContext().getPackageName());
 
-        playerImage.setImageResource(playerImageRes != 0 ? playerImageRes : R.drawable.default_lutemon);
-        enemyImage.setImageResource(enemyImageRes != 0 ? enemyImageRes : R.drawable.default_lutemon);
+        playerImage.setImageResource(playerImageRes != 0 ? playerImageRes : R.drawable.placeholder_image);
+        enemyImage.setImageResource(enemyImageRes != 0 ? enemyImageRes : R.drawable.placeholder_image);
     }
 
     private void addToBattleLog(String message) {
