@@ -45,7 +45,7 @@ public class LutemonRadioAdapter extends RecyclerView.Adapter<LutemonRadioAdapte
     @Override
     public void onBindViewHolder(@NonNull LutemonRadioViewHolder holder, int position) {
         Lutemon lutemon = lutemons.get(position);
-        holder.getLutemonRadioText().setText(lutemon.getName());
+        holder.getLutemonRadioButton().setText(lutemon.getName());
 
         // Set the RadioButton checked status based on the selected position
         holder.getLutemonRadioButton().setChecked(position == selectedPosition);
@@ -78,20 +78,14 @@ public class LutemonRadioAdapter extends RecyclerView.Adapter<LutemonRadioAdapte
 
     public static class LutemonRadioViewHolder extends RecyclerView.ViewHolder {
         private final RadioButton lutemonRadioButton;
-        private final TextView lutemonRadioText;
 
         public LutemonRadioViewHolder(@NonNull View itemView) {
             super(itemView);
             lutemonRadioButton = itemView.findViewById(R.id.lutemonRadioButton);
-            lutemonRadioText = itemView.findViewById(R.id.lutemonRadioText);
         }
 
         public RadioButton getLutemonRadioButton() {
             return lutemonRadioButton;
-        }
-
-        public TextView getLutemonRadioText() {
-            return lutemonRadioText;
         }
     }
 }

@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.example.lutemon.databinding.ActivityMainBinding;
 import com.example.lutemon.model.CurrencyManager;
-import com.example.lutemon.model.LutemonStorage;
 
 public class MainActivity extends AppCompatActivity implements CurrencyManager.CurrencyChangeListener {
     ActivityMainBinding binding;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyManager.C
             else if (itemId==R.id.trainingGround) {
                 replaceFragment(new TrainingGroundFragment());
             } else if (itemId == R.id.battleArena) {
-                replaceFragment(new BattleArenaFragment());
+                replaceFragment(new LutemonSelectionFragment());
             }
 
             return true;

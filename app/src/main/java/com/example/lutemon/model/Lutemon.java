@@ -27,7 +27,8 @@ public abstract class Lutemon implements Serializable {
     private String imageResource;
     private String elementIconResource;
     private int trainingCost;
-
+    private int wins;
+    private int losses;
     private List<TrainingCostChangeListener> trainingCostListeners = new ArrayList<>();
 
     public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, int defense, String imageResource, String elementIconResource) {
@@ -46,6 +47,8 @@ public abstract class Lutemon implements Serializable {
         this.elementIconResource = elementIconResource;
         this.experience = 0;
         this.trainingCost = 100;
+        this.wins = 0;
+        this.losses = 0;
     }
 
     public int getId() {
@@ -95,6 +98,10 @@ public abstract class Lutemon implements Serializable {
     public String getElementIconResource() {
         return elementIconResource;
     }
+
+    public int getWins() { return wins; }
+
+    public int getLosses() { return losses; }
 
     public void setAttackDice(int attackDice) {
         this.attackDice = attackDice;

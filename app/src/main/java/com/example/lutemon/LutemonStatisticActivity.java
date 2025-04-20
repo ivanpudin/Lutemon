@@ -19,7 +19,7 @@ public class LutemonStatisticActivity extends AppCompatActivity {
     // Intent extras
     public static final String EXTRA_LUTEMON_ID = "extra_lutemon_id";
     private ImageView statisticViewImage, statisticViewElement;
-    private TextView statisticViewName, statisticViewAttack, statisticViewHealth, statisticViewDefence, statisticViewExp;
+    private TextView statisticViewName, statisticViewAttack, statisticViewHealth, statisticViewDefence, statisticViewExp, abilityName1, abilityName2, abilityDesc1, abilityDesc2;
     private FloatingActionButton backButton, deleteButton;
     private Lutemon lutemon;
 
@@ -36,6 +36,10 @@ public class LutemonStatisticActivity extends AppCompatActivity {
         statisticViewExp = findViewById(R.id.statisticViewExp);
         backButton = findViewById(R.id.statisticViewBackButton);
         deleteButton = findViewById(R.id.statisticViewDeleteButton);
+        abilityName1 = findViewById(R.id.statisticViewText1);
+        abilityDesc1 = findViewById(R.id.statisticViewText2);
+        abilityName2 = findViewById(R.id.statisticViewText3);
+        abilityDesc2 = findViewById(R.id.statisticViewText4);
 
         displayLutemonDetails();
 
@@ -99,6 +103,36 @@ public class LutemonStatisticActivity extends AppCompatActivity {
                 statisticViewElement.setBackgroundColor(
                         getResources().getColor(android.R.color.darker_gray));
             }
+            abilityName1.setText(lutemon.getElement());
+            switch (lutemon.getElement()) {
+                case "Fire":
+                    abilityDesc1.setText("Sets a Lutemon on fire, dealing 2 damage per turn for 3 turns");
+                    break;
+
+                case "Water":
+                    abilityDesc1.setText("Deals 6 damage to the enemy, while soaking both Lutemon");
+                    break;
+
+                case "Ice":
+                    abilityDesc1.setText("Deals 4 damage and freezes enemy Lutemon for 1 turn");
+                    break;
+
+                case "Wind":
+                    abilityDesc1.setText("Deals 2 damage per turn for 3 turns");
+                    break;
+
+                case "Earth":
+                    abilityDesc1.setText("Deals 2 damage per turn for 3 turns");
+                    break;
+
+                case "Thunder":
+                    abilityDesc1.setText("Deals 2 damage per turn for 3 turns");
+                    break;
+            }
+
+            // Set unique ability
+            abilityName2.setText("Unique Ability");
+            abilityDesc2.setText("Placeholder description for " + lutemon.getElement() + " type.");
 
         } catch (Exception e) {
             ErrorHandler.handleError(
