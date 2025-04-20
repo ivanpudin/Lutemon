@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import com.example.lutemon.model.LevelingSystem;
 import com.example.lutemon.model.Lutemon;
 import com.example.lutemon.model.LutemonStorage;
 
@@ -428,6 +429,7 @@ public class BattleArenaFragment extends Fragment {
         if (playerLutemon.getCurrentHealth() <= 0) {
             playerLutemon.setCurrentHealth(0);
             addToBattleLog(playerLutemon.getName() + " has been defeated!");
+            LevelingSystem.rewardWin(playerLutemon);
             disableButtons();
             end = true;
 
@@ -439,10 +441,13 @@ public class BattleArenaFragment extends Fragment {
             LutemonStorage.getInstance().setLutemons((ArrayList<Lutemon>)LutemonStorage.getInstance().getLutemons());
 
             // Show return button
-            showBattleEnd();
+            new Handler().postDelayed(() -> {
+                showBattleResult();
+            }, 1000);
         } else if (enemyLutemon.getCurrentHealth() <= 0) {
             enemyLutemon.setCurrentHealth(0);
             addToBattleLog(enemyLutemon.getName() + " has been defeated!");
+            LevelingSystem.rewardWin(enemyLutemon);
             disableButtons();
             end = true;
 
@@ -560,13 +565,13 @@ public class BattleArenaFragment extends Fragment {
         // Player info
         playerName.setText(playerLutemon.getName());
         playerHealth.setText("HP: " + playerLutemon.getCurrentHealth() + "/" + playerLutemon.getMaxHealth());
-        playerHealthBar.setProgress(playerLutemon.getCurrentHealth() * 10);
+        playerHealthBar.setProgress((int) (((double)playerLutemon.getCurrentHealth() / (double)playerLutemon.getMaxHealth()) * 100));
         playerStatus.setText(playerStatusEffect.isEmpty() ? "" : playerStatusEffect + " (" + playerStatusTurns + ")");
 
         // Enemy info
         enemyName.setText(enemyLutemon.getName());
         enemyHealth.setText("HP: " + enemyLutemon.getCurrentHealth() + "/" + enemyLutemon.getMaxHealth());
-        enemyHealthBar.setProgress(enemyLutemon.getCurrentHealth() * 10);
+        enemyHealthBar.setProgress((int) (((double)enemyLutemon.getCurrentHealth() / (double)enemyLutemon.getMaxHealth()) * 100));
         enemyStatus.setText(enemyStatusEffect.isEmpty() ? "" : enemyStatusEffect + " (" + enemyStatusTurns + ")");
 
         // Update button states
