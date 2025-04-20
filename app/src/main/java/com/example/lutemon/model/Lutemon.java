@@ -32,7 +32,6 @@ public abstract class Lutemon implements Serializable {
     private int losses;
     private int trainingStat;
     private List<TrainingCostChangeListener> trainingCostListeners = new ArrayList<>();
-    CurrencyManager currencyManager = CurrencyManager.getInstance();
 
 
     public Lutemon(String name, String element, int attackDice, int attackCount, int maxHealth, int defense, String imageResource, String elementIconResource) {
@@ -151,7 +150,7 @@ public abstract class Lutemon implements Serializable {
     public void won() {
         wins++;
         heal();
-        currencyManager.addCurrency(125);
+        CurrencyManager.getInstance().addCurrency(125);
     }
 
     public void lost() {
