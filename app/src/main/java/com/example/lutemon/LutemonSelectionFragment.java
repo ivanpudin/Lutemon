@@ -1,15 +1,20 @@
 package com.example.lutemon;
-import android.widget.ImageView;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.lutemon.model.Lutemon;
 import com.example.lutemon.model.LutemonStorage;
@@ -20,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class LutemonSelectionActivity extends AppCompatActivity {
+public class LutemonSelectionFragment extends Fragment {
 
     private ListView lutemonListView;
     private Button startBattleButton;
@@ -29,18 +34,32 @@ public class LutemonSelectionActivity extends AppCompatActivity {
     private Lutemon selectedLutemon = null;
     private List<Map<String, Object>> lutemonDataList;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lutemon_selection);
+    public LutemonSelectionFragment() {
+        // Required empty public constructor
+    }
 
-        lutemonListView = findViewById(R.id.lutemonListView);
-        startBattleButton = findViewById(R.id.startBattleButton);
-        backButton = findViewById(R.id.backButton);
+    public static LutemonSelectionFragment newInstance() {
+        return new LutemonSelectionFragment();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_lutemon_selection, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        lutemonListView = view.findViewById(R.id.lutemonListView);
+        startBattleButton = view.findViewById(R.id.startBattleButton);
+        backButton = view.findViewById(R.id.backButton);
 
         populateLutemonList();
 
-        lutemonListView.setOnItemClickListener((parent, view, position, id) -> {
+        lutemonListView.setOnItemClickListener((parent, v, position, id) -> {
             // Deselect all items
             for (Map<String, Object> item : lutemonDataList) {
                 item.put("isSelected", false);
@@ -61,14 +80,24 @@ public class LutemonSelectionActivity extends AppCompatActivity {
             if (selectedLutemon != null) {
                 startBattle();
             } else {
-                Toast.makeText(this, "Please select a Lutemon", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Please select a Lutemon", Toast.LENGTH_SHORT).show();
             }
         });
 
-        backButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> {
+            // Navigate back to previous fragment
+            getParentFragmentManager().popBackStack();
+        });
 
         // Initially disable start button
         startBattleButton.setEnabled(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh the list when returning to this fragment
+        populateLutemonList();
     }
 
     private void populateLutemonList() {
@@ -76,8 +105,8 @@ public class LutemonSelectionActivity extends AppCompatActivity {
         lutemonDataList = new ArrayList<>();
 
         if (lutemons.isEmpty()) {
-            Toast.makeText(this, "No Lutemons available. Create some first!", Toast.LENGTH_LONG).show();
-            finish();
+            Toast.makeText(requireContext(), "No Lutemons available. Create some first!", Toast.LENGTH_LONG).show();
+            getParentFragmentManager().popBackStack();
             return;
         }
 
@@ -95,8 +124,8 @@ public class LutemonSelectionActivity extends AppCompatActivity {
             item.put("isSelected", false);
 
             // Get image resource ID
-            int imageResId = getResources().getIdentifier(
-                    lutemon.getImageResource(), "drawable", getPackageName());
+            int imageResId = requireContext().getResources().getIdentifier(
+                    lutemon.getImageResource(), "drawable", requireContext().getPackageName());
             item.put("imageResId", imageResId != 0 ? imageResId : R.drawable.default_lutemon);
 
             lutemonDataList.add(item);
@@ -106,7 +135,7 @@ public class LutemonSelectionActivity extends AppCompatActivity {
         int[] to = {R.id.lutemonName, R.id.lutemonElement, R.id.lutemonStats,
                 R.id.lutemonExperience, R.id.lutemonRecord, R.id.lutemonImage};
 
-        SimpleAdapter adapter = new SimpleAdapter(this, lutemonDataList,
+        SimpleAdapter adapter = new SimpleAdapter(requireContext(), lutemonDataList,
                 R.layout.lutemon_selection_item, from, to) {
             public void setViewImage(ImageView v, Object value) {
                 v.setImageResource((Integer) value);
@@ -118,14 +147,18 @@ public class LutemonSelectionActivity extends AppCompatActivity {
 
                 boolean isSelected = (boolean) lutemonDataList.get(position).get("isSelected");
                 view.setBackgroundColor(isSelected ?
-                        getResources().getColor(R.color.selected_item) :
-                        getResources().getColor(android.R.color.transparent));
+                        requireContext().getResources().getColor(R.color.selected_item) :
+                        requireContext().getResources().getColor(android.R.color.transparent));
 
                 return view;
             }
         };
 
         lutemonListView.setAdapter(adapter);
+
+        // Reset selection
+        selectedLutemon = null;
+        startBattleButton.setEnabled(false);
     }
 
     private void startBattle() {
@@ -140,27 +173,20 @@ public class LutemonSelectionActivity extends AppCompatActivity {
         }
 
         if (possibleOpponents.isEmpty()) {
-            Toast.makeText(this, "No opponents available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "No opponents available", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Select random opponent
         Lutemon aiLutemon = possibleOpponents.get(new Random().nextInt(possibleOpponents.size()));
 
-        // Start battle activity
-        Intent intent = new Intent(this, BattleArenaFragment.class);
-        intent.putExtra("playerLutemon", selectedLutemon);
-        intent.putExtra("aiLutemon", aiLutemon);
-        startActivityForResult(intent, 1);
-    }
+        // Create a new battle arena fragment and pass the Lutemons
+        BattleArenaFragment battleFragment = BattleArenaFragment.newInstance(selectedLutemon, aiLutemon);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1) {
-            // Refresh the list to update stats after battle
-            populateLutemonList();
-        }
+        // Navigate to the battle fragment
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.frameLayout, battleFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
