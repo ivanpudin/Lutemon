@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeFragment"
-    android:background="#0425de">
+    android:background="@drawable/gradient_background">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeRecyclerView"
@@ -33,7 +33,9 @@
         android:layout_margin="16dp"
         android:elevation="24dp"
         app:fabSize="normal"
-        android:contentDescription="Add Lutemon"/>
+        app:tint="@color/white"
+        android:contentDescription="Add Lutemon"
+        android:backgroundTint="@color/primary_4"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/saveLutemonsButton"
@@ -46,6 +48,8 @@
         android:layout_marginBottom="80dp"
         android:elevation="24dp"
         app:fabSize="normal"
+        app:tint="@color/white"
+        android:backgroundTint="@color/primary_4"
         android:contentDescription="Save Lutemons"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -59,6 +63,8 @@
         android:layout_marginBottom="144dp"
         android:elevation="24dp"
         app:fabSize="normal"
-        android:contentDescription="Load Lutemons"/>
+        app:tint="@color/white"
+        android:backgroundTint="@color/primary_4"
+        android:contentDescription="Load Lutemons" />
 
 </FrameLayout>

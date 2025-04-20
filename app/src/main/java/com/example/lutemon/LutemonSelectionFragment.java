@@ -126,7 +126,7 @@ public class LutemonSelectionFragment extends Fragment {
             // Get image resource ID
             int imageResId = requireContext().getResources().getIdentifier(
                     lutemon.getImageResource(), "drawable", requireContext().getPackageName());
-            item.put("imageResId", imageResId != 0 ? imageResId : R.drawable.default_lutemon);
+            item.put("imageResId", imageResId != 0 ? imageResId : R.drawable.placeholder_image);
 
             lutemonDataList.add(item);
         }
