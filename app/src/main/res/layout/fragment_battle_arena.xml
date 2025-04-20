@@ -74,6 +74,30 @@
                 app:layout_constraintTop_toBottomOf="@id/aiHealthBar"
                 tools:text="100/100" />
 
+            <!-- New Status Effect Display -->
+            <TextView
+                android:id="@+id/aiStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#FF0000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/aiHealthText"
+                tools:text="OnFire (2)" />
+
+            <!-- Fatality Charge Bar -->
+            <ProgressBar
+                android:id="@+id/aiFatalityBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="8dp"
+                android:layout_marginTop="4dp"
+                android:progress="50"
+                android:progressTint="#880000"
+                app:layout_constraintEnd_toEndOf="@id/aiHealthBar"
+                app:layout_constraintStart_toStartOf="@id/aiHealthBar"
+                app:layout_constraintTop_toBottomOf="@id/aiStatusText" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
@@ -142,6 +166,33 @@
                 app:layout_constraintStart_toEndOf="@id/playerHealthLabel"
                 app:layout_constraintTop_toBottomOf="@id/playerHealthBar"
                 tools:text="100/100" />
+
+            <!-- New Status Effect Display -->
+            <TextView
+                android:id="@+id/playerStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:textColor="#FF0000"
+                app:layout_constraintStart_toEndOf="@id/playerLutemonImage"
+                app:layout_constraintTop_toBottomOf="@id/playerHealthText"
+                tools:text="Bleeding (3)" />
+
+            <!-- Fatality Charge Bar -->
+            <ProgressBar
+                android:id="@+id/playerFatalityBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:progress="80"
+                android:progressTint="#880000"
+                app:layout_constraintEnd_toEndOf="@id/playerHealthBar"
+                app:layout_constraintStart_toStartOf="@id/playerHealthBar"
+                app:layout_constraintTop_toBottomOf="@id/playerStatusText" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -212,23 +263,22 @@
                 android:backgroundTint="@color/primary_4"/>
 
             <Button
-                android:id="@+id/defendButton"
+                android:id="@+id/specialButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:text="Defend"
-                android:backgroundTint="@color/primary_4"/>
+                android:text="Special" />
+
 
             <Button
-                android:id="@+id/retreatButton"
+                android:id="@+id/fatalityButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:text="Retreat"
-                android:backgroundTint="@color/primary_4"/>
+                android:text="Fatality" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -258,6 +308,15 @@
                 android:textAlignment="center"
                 android:textSize="24sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/resultMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
 
             <Button
                 android:id="@+id/newBattleButton"

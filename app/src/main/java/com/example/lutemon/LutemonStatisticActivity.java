@@ -131,8 +131,8 @@ public class LutemonStatisticActivity extends AppCompatActivity {
             }
 
             // Set unique ability
-            abilityName2.setText("Unique Ability");
-            abilityDesc2.setText("Placeholder description for " + lutemon.getElement() + " type.");
+            abilityName2.setText("Fatality");
+            abilityDesc2.setText("A risky move that could win or lose the game for the Lutemon using it.");
 
         } catch (Exception e) {
             ErrorHandler.handleError(

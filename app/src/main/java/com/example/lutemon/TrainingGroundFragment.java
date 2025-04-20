@@ -70,6 +70,7 @@ public class TrainingGroundFragment extends Fragment {
                 if (currentCurrency >= trainingCost) {
                     currencyManager.subtractCurrency(trainingCost);
                     LevelingSystem.rewardTraining(selectedLutemon);
+                    selectedLutemon.incTrainingStat();
 
                     // After training, update the button text and training cost
                     updateTrainButton(selectedLutemon);
