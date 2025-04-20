@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/battle_background"
+    android:background="@drawable/gradient_background"
     tools:context=".BattleArenaFragment">
 
     <!-- AI Lutemon Section -->
@@ -12,7 +12,9 @@
         android:id="@+id/aiLutemonCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="50dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -39,7 +41,7 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/default_lutemon" />
+                tools:src="@drawable/placeholder_image" />
 
             <TextView
                 android:id="@+id/aiHealthLabel"
@@ -107,7 +109,7 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/playerLutemonName"
-                tools:src="@drawable/default_lutemon" />
+                tools:src="@drawable/placeholder_image" />
 
             <TextView
                 android:id="@+id/playerHealthLabel"
@@ -206,7 +208,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:text="Attack" />
+                android:text="Attack"
+                android:backgroundTint="@color/primary_4"/>
 
             <Button
                 android:id="@+id/defendButton"
@@ -215,7 +218,8 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:text="Defend" />
+                android:text="Defend"
+                android:backgroundTint="@color/primary_4"/>
 
             <Button
                 android:id="@+id/retreatButton"
@@ -223,7 +227,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:text="Retreat" />
+                android:text="Retreat"
+                android:backgroundTint="@color/primary_4"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

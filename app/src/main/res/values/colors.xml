@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="selected_item">#33009688</color>
+    <color name="primary_1">#FDC5F5</color>
+    <color name="primary_2">#F7AEF8</color>
+    <color name="primary_3">#FDC5F5</color>
+    <color name="primary_4">#8093F1</color>
+    <color name="primary_5">#72DDF7</color>
 </resources>

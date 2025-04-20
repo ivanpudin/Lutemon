@@ -147,8 +147,8 @@ public class BattleArenaFragment extends Fragment {
         int aiImgResId = getResources().getIdentifier(
                 aiLutemon.getImageResource(), "drawable", requireContext().getPackageName());
 
-        playerImage.setImageResource(playerImgResId != 0 ? playerImgResId : R.drawable.default_lutemon);
-        aiImage.setImageResource(aiImgResId != 0 ? aiImgResId : R.drawable.default_lutemon);
+        playerImage.setImageResource(playerImgResId != 0 ? playerImgResId : R.drawable.placeholder_image);
+        aiImage.setImageResource(aiImgResId != 0 ? aiImgResId : R.drawable.placeholder_image);
 
         // Start battle
         isPlayerTurn = random.nextBoolean(); // Randomly determine who goes first
