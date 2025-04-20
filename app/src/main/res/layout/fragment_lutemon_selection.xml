@@ -41,15 +41,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/backButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:layout_weight="1"
-            android:text="Back"
-            android:backgroundTint="@color/primary_4"/>
-
-        <Button
             android:id="@+id/startBattleButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

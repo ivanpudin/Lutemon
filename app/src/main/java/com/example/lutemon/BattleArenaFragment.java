@@ -2,7 +2,6 @@ package com.example.lutemon;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,378 +13,586 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
-import com.example.lutemon.model.LevelingSystem;
 import com.example.lutemon.model.Lutemon;
+import com.example.lutemon.model.LutemonStorage;
 
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BattleArenaFragment extends Fragment {
-
+    private CardView battleControlsCard;
+    private CardView battleResultLayout;
     private Lutemon playerLutemon;
-    private Lutemon aiLutemon;
-
-    private TextView playerNameText;
-    private TextView aiNameText;
-    private ProgressBar playerHealthBar;
-    private ProgressBar aiHealthBar;
-    private TextView playerHealthText;
-    private TextView aiHealthText;
-    private ImageView playerImage;
-    private ImageView aiImage;
-    private TextView battleLogText;
-    private Button attackButton;
-    private Button defendButton;
-    private Button retreatButton;
-    private View battleResultLayout;
-    private Button newBattleButton;
-    private Button homeButton;
-
+    private Lutemon enemyLutemon;
     private Random random = new Random();
+
+    // UI elements
+    private ImageView playerImage, enemyImage;
+    private TextView playerName, enemyName;
+    private TextView playerHealth, enemyHealth;
+    private TextView playerStatus, enemyStatus;
+    private TextView battleLog;
+    private ProgressBar playerFatalityBar, enemyFatalityBar, playerHealthBar, enemyHealthBar;
+    private Button attackButton, specialButton, fatalityButton;
+
+    // Cooldown trackers
+    private int playerSpecialCooldown = 0;
+    private int enemySpecialCooldown = 0;
+    private int playerFatalityCharge = 0;
+    private int enemyFatalityCharge = 0;
     private boolean isPlayerTurn = true;
-    private boolean isBattleActive = false;
-    private AtomicBoolean isAnimating = new AtomicBoolean(false);
-    private Handler handler = new Handler(Looper.getMainLooper());
 
-    public BattleArenaFragment() {
-        // Required empty public constructor
-    }
+    // Status effects
+    private int playerStatusTurns = 0;
+    private String playerStatusEffect = "";
+    private int enemyStatusTurns = 0;
+    private String enemyStatusEffect = "";
+    private boolean end = false;
 
-    public static BattleArenaFragment newInstance(Lutemon playerLutemon, Lutemon aiLutemon) {
+    public static BattleArenaFragment newInstance(Lutemon player, Lutemon enemy) {
         BattleArenaFragment fragment = new BattleArenaFragment();
         Bundle args = new Bundle();
-        args.putSerializable("playerLutemon", playerLutemon);
-        args.putSerializable("aiLutemon", aiLutemon);
+        args.putSerializable("player", player);
+        args.putSerializable("enemy", enemy);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            playerLutemon = (Lutemon) getArguments().getSerializable("playerLutemon");
-            aiLutemon = (Lutemon) getArguments().getSerializable("aiLutemon");
+            playerLutemon = (Lutemon) getArguments().getSerializable("player");
+            enemyLutemon = (Lutemon) getArguments().getSerializable("enemy");
+
+            // Refresh the Lutemons from storage to get latest stats
+            playerLutemon = LutemonStorage.getInstance().getLutemonById(playerLutemon.getId());
+            enemyLutemon = LutemonStorage.getInstance().getLutemonById(enemyLutemon.getId());
         }
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_battle_arena, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_battle_arena, container, false);
+
+        // Initialize UI elements
+        playerImage = view.findViewById(R.id.playerLutemonImage);
+        enemyImage = view.findViewById(R.id.aiLutemonImage);
+        playerName = view.findViewById(R.id.playerLutemonName);
+        enemyName = view.findViewById(R.id.aiLutemonName);
+        playerHealth = view.findViewById(R.id.playerHealthText);
+        enemyHealth = view.findViewById(R.id.aiHealthText);
+        playerHealthBar = view.findViewById(R.id.playerHealthBar);
+        enemyHealthBar = view.findViewById(R.id.aiHealthBar);
+        playerStatus = view.findViewById(R.id.playerStatusText);
+        enemyStatus = view.findViewById(R.id.aiStatusText);
+        battleLog = view.findViewById(R.id.battleLogText);
+        playerFatalityBar = view.findViewById(R.id.playerFatalityBar);
+        enemyFatalityBar = view.findViewById(R.id.aiFatalityBar);
+        attackButton = view.findViewById(R.id.attackButton);
+        specialButton = view.findViewById(R.id.specialButton);
+        fatalityButton = view.findViewById(R.id.fatalityButton);
+        battleResultLayout = view.findViewById(R.id.battleResultLayout);
+        battleControlsCard = view.findViewById(R.id.battleControlsCard);
+
+        // Set initial UI state
+        updateUI();
+
+        // Button listeners
+        attackButton.setOnClickListener(v -> {
+            if (isPlayerTurn) {
+                performAttack();
+                endPlayerTurn();
+            }
+        });
+
+        specialButton.setOnClickListener(v -> {
+            if (isPlayerTurn) {
+                performSpecial();
+                endPlayerTurn();
+            }
+        });
+
+        fatalityButton.setOnClickListener(v -> {
+            if (isPlayerTurn && playerFatalityCharge >= 10) {
+                performFatality();
+                endPlayerTurn();
+            } else {
+                addToBattleLog("Fatality not charged yet! (" + playerFatalityCharge + "/10)");
+            }
+        });
+
+        return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    private void performAttack() {
+        int damage = 8; // Base attack damage
+        enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - damage);
+        addToBattleLog(playerLutemon.getName() + " attacks for " + damage + " damage!");
 
-        initializeViews(view);
+        // Charge fatality meter
+        playerFatalityCharge = Math.min(playerFatalityCharge + 1, 10);
+        playerFatalityBar.setProgress(playerFatalityCharge * 10);
 
-        if (playerLutemon == null || aiLutemon == null) {
-            Toast.makeText(getContext(), "Error loading Lutemons", Toast.LENGTH_SHORT).show();
-            // Navigate back to previous screen
-            getParentFragmentManager().popBackStack();
+        checkBattleEnd();
+        updateUI();
+    }
+
+
+    private void performSpecial() {
+        if (playerSpecialCooldown > 0) {
+            addToBattleLog("Special ability is on cooldown! (" + playerSpecialCooldown + " turns left)");
             return;
         }
 
-        setupBattle();
+        String element = playerLutemon.getElement();
+        int damage = 0;
+        String effect = "";
+        int effectTurns = 0;
 
-        attackButton.setOnClickListener(v -> {
-            if (isBattleActive && isPlayerTurn && !isAnimating.get()) {
-                performAttack(playerLutemon, aiLutemon, true);
-            }
-        });
-
-        defendButton.setOnClickListener(v -> {
-            if (isBattleActive && isPlayerTurn && !isAnimating.get()) {
-                defendPlayer();
-            }
-        });
-
-        retreatButton.setOnClickListener(v -> {
-            if (!isAnimating.get()) {
-                endBattle(false);
-            }
-        });
-    }
-
-    private void initializeViews(View view) {
-        playerNameText = view.findViewById(R.id.playerLutemonName);
-        aiNameText = view.findViewById(R.id.aiLutemonName);
-        playerHealthBar = view.findViewById(R.id.playerHealthBar);
-        aiHealthBar = view.findViewById(R.id.aiHealthBar);
-        playerHealthText = view.findViewById(R.id.playerHealthText);
-        aiHealthText = view.findViewById(R.id.aiHealthText);
-        playerImage = view.findViewById(R.id.playerLutemonImage);
-        aiImage = view.findViewById(R.id.aiLutemonImage);
-        battleLogText = view.findViewById(R.id.battleLogText);
-        attackButton = view.findViewById(R.id.attackButton);
-        defendButton = view.findViewById(R.id.defendButton);
-        retreatButton = view.findViewById(R.id.retreatButton);
-        battleResultLayout = view.findViewById(R.id.battleResultLayout);
-        newBattleButton = view.findViewById(R.id.newBattleButton);
-        homeButton = view.findViewById(R.id.homeButton);
-    }
-
-    private void setupBattle() {
-        // Reset Lutemons to full health
-        playerLutemon.heal();
-        aiLutemon.heal();
-
-        // Set UI elements
-        playerNameText.setText(playerLutemon.getName());
-        aiNameText.setText(aiLutemon.getName());
-
-        updateHealthDisplay();
-
-        // Load images
-        int playerImgResId = getResources().getIdentifier(
-                playerLutemon.getImageResource(), "drawable", requireContext().getPackageName());
-        int aiImgResId = getResources().getIdentifier(
-                aiLutemon.getImageResource(), "drawable", requireContext().getPackageName());
-
-        playerImage.setImageResource(playerImgResId != 0 ? playerImgResId : R.drawable.placeholder_image);
-        aiImage.setImageResource(aiImgResId != 0 ? aiImgResId : R.drawable.placeholder_image);
-
-        // Start battle
-        isPlayerTurn = random.nextBoolean(); // Randomly determine who goes first
-        isBattleActive = true;
-
-        appendToBattleLog("Battle begins between " + playerLutemon.getName() +
-                " and " + aiLutemon.getName() + "!");
-
-        if (!isPlayerTurn) {
-            appendToBattleLog(aiLutemon.getName() + " goes first!");
-            handler.postDelayed(this::performAiTurn, 1500);
-        } else {
-            appendToBattleLog(playerLutemon.getName() + " goes first!");
-            appendToBattleLog("Your turn! Choose your action.");
+        switch (element.toLowerCase()) {
+            case "water":
+                damage = 6;
+                effect = "Wet";
+                effectTurns = 3;
+                enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - damage);
+                enemyStatusEffect = effect;
+                enemyStatusTurns = effectTurns;
+                playerStatusEffect = effect;
+                playerStatusTurns = effectTurns;
+                addToBattleLog(playerLutemon.getName() + " splashes water everywhere! Both are now Wet for " + effectTurns + " turns!");
+                break;
+            case "fire":
+                damage = 4;
+                effect = "OnFire";
+                effectTurns = 3;
+                enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - damage);
+                enemyStatusEffect = effect;
+                enemyStatusTurns = effectTurns;
+                addToBattleLog(playerLutemon.getName() + " engulfs the enemy in flames! " + damage + " damage and OnFire for " + effectTurns + " turns!");
+                break;
+            case "ice":
+                damage = 4;
+                effect = "Frozen";
+                effectTurns = 2;
+                enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - damage);
+                enemyStatusEffect = effect;
+                enemyStatusTurns = effectTurns;
+                isPlayerTurn = true; // Skip enemy turn
+                addToBattleLog(playerLutemon.getName() + " freezes the enemy solid! " + damage + " damage and Frozen for " + effectTurns + " turns!");
+                break;
+            case "wind":
+                damage = 4;
+                effect = "Bleeding";
+                effectTurns = 4;
+                enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - damage);
+                enemyStatusEffect = effect;
+                enemyStatusTurns = effectTurns;
+                addToBattleLog(playerLutemon.getName() + " slices the enemy with wind blades! " + damage + " damage and Bleeding for " + effectTurns + " turns!");
+                break;
+            case "earth":
+                damage = 4;
+                effect = "Constrained";
+                effectTurns = 2;
+                enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - damage);
+                enemyStatusEffect = effect;
+                enemyStatusTurns = effectTurns;
+                isPlayerTurn = true; // Skip enemy turn
+                addToBattleLog(playerLutemon.getName() + " traps the enemy in earth! " + damage + " damage and Constrained for " + effectTurns + " turns!");
+                break;
+            case "thunder":
+                damage = 4;
+                effect = "Electrified";
+                effectTurns = 3;
+                enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - damage);
+                enemyStatusEffect = effect;
+                enemyStatusTurns = effectTurns;
+                addToBattleLog(playerLutemon.getName() + " zaps the enemy with lightning! " + damage + " damage and Electrified for " + effectTurns + " turns!");
+                break;
         }
 
-        updateButtonStates();
+        // Set cooldown
+        playerSpecialCooldown = 3;
+        specialButton.setText("Special (" + playerSpecialCooldown + ")");
+
+        // Charge fatality meter
+        playerFatalityCharge = Math.min(playerFatalityCharge + 2, 10);
+        playerFatalityBar.setProgress(playerFatalityCharge * 10);
+
+        checkBattleEnd();
+        updateUI();
     }
 
-    private void updateHealthDisplay() {
-        playerHealthBar.setMax(playerLutemon.getMaxHealth());
-        playerHealthBar.setProgress(playerLutemon.getCurrentHealth());
-        playerHealthText.setText(playerLutemon.getCurrentHealth() + "/" + playerLutemon.getMaxHealth());
-
-        aiHealthBar.setMax(aiLutemon.getMaxHealth());
-        aiHealthBar.setProgress(aiLutemon.getCurrentHealth());
-        aiHealthText.setText(aiLutemon.getCurrentHealth() + "/" + aiLutemon.getMaxHealth());
-    }
-
-    private void performAttack(Lutemon attacker, Lutemon defender, boolean isPlayerAttacking) {
-        isAnimating.set(true);
-        updateButtonStates();
-
-        appendToBattleLog(attacker.getName() + " attacks!");
-
-        // Calculate attack damage using dice rolls
-        int totalDamage = 0;
-        StringBuilder damageLog = new StringBuilder();
-
-        for (int i = 0; i < attacker.getAttackCount(); i++) {
-            int roll = random.nextInt(attacker.getAttackDice()) + 1;
-            totalDamage += roll;
-            damageLog.append("Roll ").append(i + 1).append(": ").append(roll);
-
-            if (i < attacker.getAttackCount() - 1) {
-                damageLog.append(", ");
-            }
+    private void performFatality() {
+        if (random.nextDouble() < 0.7) { // 70% chance to kill enemy
+            enemyLutemon.setCurrentHealth(0);
+            addToBattleLog(playerLutemon.getName() + " performs a FATALITY on " + enemyLutemon.getName() + "!");
+        } else { // 30% chance to kill self
+            playerLutemon.setCurrentHealth(0);
+            addToBattleLog(playerLutemon.getName() + "'s FATALITY backfires horribly!");
         }
 
-        // Apply defender's defense
-        int finalDamage = Math.max(1, totalDamage - defender.getDefense());
+        playerFatalityCharge = 0;
+        playerFatalityBar.setProgress(0);
 
-        // Apply damage
-        int newHealth = Math.max(0, defender.getCurrentHealth() - finalDamage);
-        defender.setCurrentHealth(newHealth);
-
-        appendToBattleLog(damageLog.toString());
-        appendToBattleLog(attacker.getName() + " deals " + finalDamage + " damage!");
-
-        // Animate the attack
-        ImageView attackerImage = isPlayerAttacking ? playerImage : aiImage;
-        float moveDirection = isPlayerAttacking ? 100f : -100f;
-
-        attackerImage.animate()
-                .translationXBy(moveDirection)
-                .setDuration(200)
-                .withEndAction(() ->
-                        attackerImage.animate()
-                                .translationXBy(-moveDirection)
-                                .setDuration(200)
-                                .start()
-                )
-                .start();
-
-        handler.postDelayed(() -> {
-            updateHealthDisplay();
-
-            if (defender.getCurrentHealth() <= 0) {
-                handleVictory(attacker, defender);
-            } else {
-                // Switch turns
-                isPlayerTurn = !isPlayerTurn;
-                isAnimating.set(false);
-                updateButtonStates();
-
-                if (isPlayerTurn) {
-                    appendToBattleLog("Your turn! Choose your action.");
-                } else {
-                    appendToBattleLog(aiLutemon.getName() + "'s turn!");
-                    handler.postDelayed(this::performAiTurn, 1500);
-                }
-            }
-        }, 500);
+        checkBattleEnd();
+        updateUI();
     }
 
-    private void defendPlayer() {
-        isAnimating.set(true);
-        updateButtonStates();
+    private void endPlayerTurn() {
+        if (enemyLutemon.getCurrentHealth() <= 0 || playerLutemon.getCurrentHealth() <= 0) {
+            return; // Battle already ended
+        }
 
-        // Temporarily boost defense
-        int originalDefense = playerLutemon.getDefense();
-        int defenseBoost = originalDefense / 2;
-        playerLutemon.setDefense(originalDefense + defenseBoost);
+        // Apply status effects
+        applyStatusEffects();
 
-        appendToBattleLog(playerLutemon.getName() + " takes a defensive stance!");
-        appendToBattleLog("Defense increased by " + defenseBoost + " for this turn!");
+        if (enemyStatusEffect.equals("Frozen") || enemyStatusEffect.equals("Constrained")) {
+            enemyStatusTurns--;
+            if (enemyStatusTurns <= 0) {
+                addToBattleLog(enemyLutemon.getName() + " is no longer " + enemyStatusEffect + "!");
+                enemyStatusEffect = "";
+            }
+            return; // Skip enemy turn if frozen or constrained
+        }
 
-        // End player's turn
         isPlayerTurn = false;
+        disableButtons();
 
-        handler.postDelayed(() -> {
-            isAnimating.set(false);
-            updateButtonStates();
-            appendToBattleLog(aiLutemon.getName() + "'s turn!");
+        // AI performs its move after a short delay
+        new Handler().postDelayed(() -> {
+            performEnemyMove();
+            isPlayerTurn = true;
+            enableButtons();
 
-            // AI takes turn after a short delay
-            handler.postDelayed(() -> {
-                performAiTurn();
+            // Apply status effects again after enemy turn
+            applyStatusEffects();
 
-                // Reset defense after AI's turn
-                handler.postDelayed(() -> {
-                    playerLutemon.setDefense(originalDefense);
-                    appendToBattleLog(playerLutemon.getName() + "'s defense returns to normal.");
-                }, 500);
+            // Update cooldowns
+            updateCooldowns();
 
-            }, 1000);
-        }, 500);
+            updateUI();
+        }, 1500);
     }
 
-    private void performAiTurn() {
-        isAnimating.set(true);
-        updateButtonStates();
-
-        // Simple AI: 80% chance to attack, 20% chance to defend
-        boolean aiAttacks = random.nextInt(10) < 8;
-
-        if (aiAttacks) {
-            performAttack(aiLutemon, playerLutemon, false);
+    private void performEnemyMove() {
+        if (end) { return; }
+        if (enemyFatalityCharge >= 10 && random.nextDouble() < 0.5) {
+            // 50% chance AI will use fatality if available
+            if (random.nextDouble() < 0.7) { // 70% chance to kill player
+                playerLutemon.setCurrentHealth(0);
+                addToBattleLog(enemyLutemon.getName() + " performs a FATALITY on " + playerLutemon.getName() + "!");
+            } else { // 30% chance to kill self
+                enemyLutemon.setCurrentHealth(0);
+                addToBattleLog(enemyLutemon.getName() + "'s FATALITY backfires horribly!");
+            }
+            enemyFatalityCharge = 0;
+        } else if (enemySpecialCooldown <= 0 && random.nextDouble() < 0.6) {
+            // 60% chance to use special if available
+            performEnemySpecial();
         } else {
-            // AI defends
-            appendToBattleLog(aiLutemon.getName() + " takes a defensive stance!");
+            // Default to normal attack
+            int damage = 8;
+            playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - damage);
+            addToBattleLog(enemyLutemon.getName() + " attacks for " + damage + " damage!");
 
-            // Temporarily boost defense for next turn
-            int originalDefense = aiLutemon.getDefense();
-            int defenseBoost = originalDefense / 2;
-            aiLutemon.setDefense(originalDefense + defenseBoost);
-
-            appendToBattleLog(aiLutemon.getName() + "'s defense increased by " + defenseBoost + " for the next turn!");
-
-            handler.postDelayed(() -> {
-                // Switch turns
-                isPlayerTurn = true;
-                isAnimating.set(false);
-                updateButtonStates();
-                appendToBattleLog("Your turn! Choose your action.");
-
-                // Schedule defense reset after player's turn
-                handler.postDelayed(() -> {
-                    aiLutemon.setDefense(originalDefense);
-                    appendToBattleLog(aiLutemon.getName() + "'s defense returns to normal.");
-                }, 2000);
-            }, 500);
-        }
-    }
-
-    private void handleVictory(Lutemon winner, Lutemon loser) {
-        isBattleActive = false;
-        isAnimating.set(true);
-
-        appendToBattleLog(winner.getName() + " has won the battle!");
-
-        // Add experience to winner
-        winner.setExperience(winner.getExperience() + 1);
-        appendToBattleLog(winner.getName() + " gained 1 experience point!");
-
-        // Reset loser
-        loser.heal();
-
-        // Update storage with battle results
-        LevelingSystem.rewardWin(winner);
-        LevelingSystem.rewardLoss(loser);
-
-        // End battle after a delay
-        handler.postDelayed(() -> {
-            isAnimating.set(false);
-            updateButtonStates();
-
-            // Show result buttons
-            battleResultLayout.setVisibility(View.VISIBLE);
-
-            newBattleButton.setOnClickListener(v -> {
-                // Return to lutemon selection screen
-                getParentFragmentManager().popBackStack();
-            });
-
-            homeButton.setOnClickListener(v -> {
-                // Return to home screen (clear back stack)
-                getParentFragmentManager().popBackStack(null, 0);
-            });
-        }, 2000);
-    }
-
-    private void endBattle(boolean complete) {
-        if (!complete) {
-            appendToBattleLog("Battle ended early!");
+            // Charge fatality meter
+            enemyFatalityCharge = Math.min(enemyFatalityCharge + 1, 10);
+            enemyFatalityBar.setProgress(enemyFatalityCharge * 10);
         }
 
-        // Ensure both Lutemons are healed
-        playerLutemon.heal();
-        aiLutemon.heal();
-
-        // Return to previous screen
-        getParentFragmentManager().popBackStack();
+        checkBattleEnd();
     }
 
-    private void appendToBattleLog(String message) {
-        if (battleLogText != null) {
-            battleLogText.append(message + "\n\n");
+    private void performEnemySpecial() {
+        String element = enemyLutemon.getElement();
+        int damage = 0;
+        String effect = "";
+        int effectTurns = 0;
 
-            // Auto scroll to bottom
-            if (battleLogText.getLayout() != null) {
-                final int scrollAmount = battleLogText.getLayout().getLineTop(battleLogText.getLineCount()) - battleLogText.getHeight();
-                if (scrollAmount > 0) {
-                    battleLogText.scrollTo(0, scrollAmount);
-                } else {
-                    battleLogText.scrollTo(0, 0);
-                }
+        switch (element.toLowerCase()) {
+            case "water":
+                damage = 6;
+                effect = "Wet";
+                effectTurns = 3;
+                playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - damage);
+                playerStatusEffect = effect;
+                playerStatusTurns = effectTurns;
+                enemyStatusEffect = effect;
+                enemyStatusTurns = effectTurns;
+                addToBattleLog(enemyLutemon.getName() + " splashes water everywhere! Both are now Wet for " + effectTurns + " turns!");
+                break;
+            case "fire":
+                damage = 4;
+                effect = "OnFire";
+                effectTurns = 3;
+                playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - damage);
+                playerStatusEffect = effect;
+                playerStatusTurns = effectTurns;
+                addToBattleLog(enemyLutemon.getName() + " engulfs you in flames! " + damage + " damage and OnFire for " + effectTurns + " turns!");
+                break;
+            case "ice":
+                damage = 4;
+                effect = "Frozen";
+                effectTurns = 2;
+                playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - damage);
+                playerStatusEffect = effect;
+                playerStatusTurns = effectTurns;
+                isPlayerTurn = false; // Skip player turn
+                addToBattleLog(enemyLutemon.getName() + " freezes you solid! " + damage + " damage and Frozen for " + effectTurns + " turns!");
+                break;
+            case "wind":
+                damage = 4;
+                effect = "Bleeding";
+                effectTurns = 4;
+                playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - damage);
+                playerStatusEffect = effect;
+                playerStatusTurns = effectTurns;
+                addToBattleLog(enemyLutemon.getName() + " slices you with wind blades! " + damage + " damage and Bleeding for " + effectTurns + " turns!");
+                break;
+            case "earth":
+                damage = 4;
+                effect = "Constrained";
+                effectTurns = 2;
+                playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - damage);
+                playerStatusEffect = effect;
+                playerStatusTurns = effectTurns;
+                isPlayerTurn = false; // Skip player turn
+                addToBattleLog(enemyLutemon.getName() + " traps you in earth! " + damage + " damage and Constrained for " + effectTurns + " turns!");
+                break;
+            case "thunder":
+                damage = 4;
+                effect = "Electrified";
+                effectTurns = 3;
+                playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - damage);
+                playerStatusEffect = effect;
+                playerStatusTurns = effectTurns;
+                addToBattleLog(enemyLutemon.getName() + " zaps you with lightning! " + damage + " damage and Electrified for " + effectTurns + " turns!");
+                break;
+        }
+
+        // Set cooldown
+        enemySpecialCooldown = 3;
+
+        // Charge fatality meter
+        enemyFatalityCharge = Math.min(enemyFatalityCharge + 2, 10);
+        enemyFatalityBar.setProgress(enemyFatalityCharge * 10);
+
+        checkBattleEnd();
+    }
+
+    private void applyStatusEffects() {
+        // Apply player status effects to enemy
+        if (!playerStatusEffect.isEmpty() && playerStatusTurns > 0) {
+            playerStatusTurns--;
+            if (playerStatusEffect.equals("OnFire") || playerStatusEffect.equals("Bleeding") || playerStatusEffect.equals("Electrified")) {
+                enemyLutemon.setCurrentHealth(enemyLutemon.getCurrentHealth() - 2); // 2 damage per turn
+                addToBattleLog(enemyLutemon.getName() + " takes 2 damage from " + playerStatusEffect + "!");
+            }
+            if (playerStatusTurns <= 0) {
+                addToBattleLog(playerLutemon.getName() + " is no longer " + playerStatusEffect + "!");
+                playerStatusEffect = "";
+            }
+        }
+
+        // Apply enemy status effects to player
+        if (!enemyStatusEffect.isEmpty() && enemyStatusTurns > 0) {
+            enemyStatusTurns--;
+            if (enemyStatusEffect.equals("OnFire") || enemyStatusEffect.equals("Bleeding") || enemyStatusEffect.equals("Electrified")) {
+                playerLutemon.setCurrentHealth(playerLutemon.getCurrentHealth() - 2); // 2 damage per turn
+                addToBattleLog(playerLutemon.getName() + " takes 2 damage from " + enemyStatusEffect + "!");
+            }
+            if (enemyStatusTurns <= 0) {
+                addToBattleLog(enemyLutemon.getName() + " is no longer " + enemyStatusEffect + "!");
+                enemyStatusEffect = "";
             }
         }
     }
 
-    private void updateButtonStates() {
-        boolean enabled = isBattleActive && isPlayerTurn && !isAnimating.get();
-        attackButton.setEnabled(enabled);
-        defendButton.setEnabled(enabled);
+    private void updateCooldowns() {
+        if (playerSpecialCooldown > 0) {
+            playerSpecialCooldown--;
+            specialButton.setText(playerSpecialCooldown > 0 ? "Special (" + playerSpecialCooldown + ")" : "Special");
+        }
 
-        // Retreat is always available unless animating
-        retreatButton.setEnabled(!isAnimating.get());
+        if (enemySpecialCooldown > 0) {
+            enemySpecialCooldown--;
+        }
+    }
+
+    private void checkBattleEnd() {
+        if (playerLutemon.getCurrentHealth() <= 0) {
+            playerLutemon.setCurrentHealth(0);
+            addToBattleLog(playerLutemon.getName() + " has been defeated!");
+            disableButtons();
+            end = true;
+
+            // Update win/loss records
+            enemyLutemon.won();
+            playerLutemon.lost();
+
+            // Save to storage
+            LutemonStorage.getInstance().setLutemons((ArrayList<Lutemon>)LutemonStorage.getInstance().getLutemons());
+
+            // Show return button
+            showBattleEnd();
+        } else if (enemyLutemon.getCurrentHealth() <= 0) {
+            enemyLutemon.setCurrentHealth(0);
+            addToBattleLog(enemyLutemon.getName() + " has been defeated!");
+            disableButtons();
+            end = true;
+
+            // Update win/loss records
+            playerLutemon.won();
+            enemyLutemon.lost();
+
+            // Save to storage
+            LutemonStorage.getInstance().setLutemons((ArrayList<Lutemon>)LutemonStorage.getInstance().getLutemons());
+
+            // Show return button
+            new Handler().postDelayed(() -> {
+                showBattleResult();
+            }, 1000);
+        }
+    }
+
+    private void showBattleResult() {
+        if (getView() == null) return;
+
+        // Initialize views if not already done
+        if (battleControlsCard == null) {
+            battleControlsCard = getView().findViewById(R.id.battleControlsCard);
+        }
+        if (battleResultLayout == null) {
+            battleResultLayout = getView().findViewById(R.id.battleResultLayout);
+        }
+
+        // Hide battle controls
+        battleControlsCard.setVisibility(View.GONE);
+
+        // Show result layout
+        battleResultLayout.setVisibility(View.VISIBLE);
+
+        // Set result message
+        TextView resultMessage = battleResultLayout.findViewById(R.id.resultMessage);
+        if (playerLutemon.getCurrentHealth() <= 0) {
+            resultMessage.setText("You lost the battle!");
+        } else {
+            resultMessage.setText("You won the battle!");
+        }
+
+        // Set up return button
+        Button returnButton = battleResultLayout.findViewById(R.id.homeButton);
+        returnButton.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
+
+        // Set up new battle button
+        Button newBattleButton = battleResultLayout.findViewById(R.id.newBattleButton);
+        newBattleButton.setOnClickListener(v -> {
+            battleResultLayout.setVisibility(View.GONE);
+            battleControlsCard.setVisibility(View.VISIBLE);
+            resetBattle();
+        });
+    }
+
+    private void resetBattle() {
+        // Reset health
+        playerLutemon.setCurrentHealth(playerLutemon.getMaxHealth());
+        enemyLutemon.setCurrentHealth(enemyLutemon.getMaxHealth());
+
+        // Reset status effects
+        playerStatusEffect = "";
+        enemyStatusEffect = "";
+        playerStatusTurns = 0;
+        enemyStatusTurns = 0;
+
+        // Reset cooldowns
+        playerSpecialCooldown = 0;
+        enemySpecialCooldown = 0;
+
+        // Reset fatality
+        playerFatalityCharge = 0;
+        enemyFatalityCharge = 0;
+
+        // Reset turn
+        isPlayerTurn = true;
+
+        // Update UI
+        updateUI();
+        enableButtons();
+
+        // Clear battle log
+        battleLog.setText("");
+        addToBattleLog("New battle started!");
+    }
+
+    private void showBattleEnd() {
+        // Replace action buttons with a return button
+        attackButton.setVisibility(View.GONE);
+        specialButton.setVisibility(View.GONE);
+        fatalityButton.setVisibility(View.GONE);
+
+        //Button returnButton = getView().findViewById(R.id.returnButton);
+        //returnButton.setVisibility(View.VISIBLE);
+        //returnButton.setOnClickListener(v -> {
+        //    requireActivity().getSupportFragmentManager().popBackStack();
+        //});
+    }
+
+    private void disableButtons() {
+        attackButton.setEnabled(false);
+        specialButton.setEnabled(false);
+        fatalityButton.setEnabled(false);
+    }
+
+    private void enableButtons() {
+        attackButton.setEnabled(true);
+        specialButton.setEnabled(playerSpecialCooldown <= 0);
+        fatalityButton.setEnabled(playerFatalityCharge >= 10);
+    }
+
+    private void updateUI() {
+        // Player info
+        playerName.setText(playerLutemon.getName());
+        playerHealth.setText("HP: " + playerLutemon.getCurrentHealth() + "/" + playerLutemon.getMaxHealth());
+        playerHealthBar.setProgress(playerLutemon.getCurrentHealth() * 10);
+        playerStatus.setText(playerStatusEffect.isEmpty() ? "" : playerStatusEffect + " (" + playerStatusTurns + ")");
+
+        // Enemy info
+        enemyName.setText(enemyLutemon.getName());
+        enemyHealth.setText("HP: " + enemyLutemon.getCurrentHealth() + "/" + enemyLutemon.getMaxHealth());
+        enemyHealthBar.setProgress(enemyLutemon.getCurrentHealth() * 10);
+        enemyStatus.setText(enemyStatusEffect.isEmpty() ? "" : enemyStatusEffect + " (" + enemyStatusTurns + ")");
+
+        // Update button states
+        specialButton.setText(playerSpecialCooldown > 0 ? "Special (" + playerSpecialCooldown + ")" : "Special");
+        fatalityButton.setEnabled(playerFatalityCharge >= 10);
+
+        // Update fatality bars
+        playerFatalityBar.setProgress(playerFatalityCharge * 10);
+        enemyFatalityBar.setProgress(enemyFatalityCharge * 10);
+
+        // Set images
+        int playerImageRes = getResources().getIdentifier(playerLutemon.getImageResource(), "drawable", requireContext().getPackageName());
+        int enemyImageRes = getResources().getIdentifier(enemyLutemon.getImageResource(), "drawable", requireContext().getPackageName());
+
+        playerImage.setImageResource(playerImageRes != 0 ? playerImageRes : R.drawable.placeholder_image);
+        enemyImage.setImageResource(enemyImageRes != 0 ? enemyImageRes : R.drawable.placeholder_image);
+    }
+
+    private void addToBattleLog(String message) {
+        battleLog.append(message + "\n");
+        // Auto-scroll to bottom
+        final int scrollAmount = battleLog.getLayout().getLineTop(battleLog.getLineCount()) - battleLog.getHeight();
+        if (scrollAmount > 0) {
+            battleLog.scrollTo(0, scrollAmount);
+        } else {
+            battleLog.scrollTo(0, 0);
+        }
     }
 }

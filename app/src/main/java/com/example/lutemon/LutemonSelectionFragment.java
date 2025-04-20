@@ -13,8 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.example.lutemon.model.Lutemon;
 import com.example.lutemon.model.LutemonStorage;
@@ -29,7 +27,6 @@ public class LutemonSelectionFragment extends Fragment {
 
     private ListView lutemonListView;
     private Button startBattleButton;
-    private Button backButton;
 
     private Lutemon selectedLutemon = null;
     private List<Map<String, Object>> lutemonDataList;
@@ -55,7 +52,6 @@ public class LutemonSelectionFragment extends Fragment {
 
         lutemonListView = view.findViewById(R.id.lutemonListView);
         startBattleButton = view.findViewById(R.id.startBattleButton);
-        backButton = view.findViewById(R.id.backButton);
 
         populateLutemonList();
 
@@ -82,11 +78,6 @@ public class LutemonSelectionFragment extends Fragment {
             } else {
                 Toast.makeText(requireContext(), "Please select a Lutemon", Toast.LENGTH_SHORT).show();
             }
-        });
-
-        backButton.setOnClickListener(v -> {
-            // Navigate back to previous fragment
-            getParentFragmentManager().popBackStack();
         });
 
         // Initially disable start button
