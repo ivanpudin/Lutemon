@@ -142,6 +142,7 @@ public class BattleArenaFragment extends Fragment {
         updateUI();
     }
 
+
     private void performSpecial() {
         if (playerSpecialCooldown > 0) {
             addToBattleLog("Special ability is on cooldown! (" + playerSpecialCooldown + " turns left)");

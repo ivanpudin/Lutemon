@@ -4,12 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TrainingGroundFragment"
-    android:background="#6135b8">
+    android:background="@drawable/gradient_background">
 
+    <TextView
+        android:id="@+id/trainingGroundTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Train Lutemons"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="start"
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="10dp"/>
 
     <RadioGroup
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/trainingGroundRecyclerView"
@@ -24,5 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Train Lutemon"
-        android:layout_gravity="bottom|center"/>
+        android:layout_gravity="bottom|center"
+        android:backgroundTint="@color/primary_4"
+        android:layout_margin="32dp"/>
 </FrameLayout>

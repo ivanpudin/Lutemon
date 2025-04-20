@@ -5,7 +5,7 @@
     android:id="@+id/statisticScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/gradient_secondary"
     tools:context=".LutemonStatisticActivity">
 
     <ScrollView
@@ -264,9 +264,13 @@
         android:clickable="true"
         android:src="@drawable/back_svgrepo_com"
         android:layout_gravity="top|start"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="35dp"
         android:elevation="24dp"
         app:fabSize="normal"
+        app:tint="@color/white"
+        android:backgroundTint="@color/primary_4"
         android:contentDescription="Back to lutemon list" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -277,8 +281,11 @@
         android:src="@drawable/delete"
         app:tint="#D70040"
         android:layout_gravity="top|end"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="35dp"
         android:elevation="24dp"
+        android:backgroundTint="@color/primary_4"
         app:fabSize="normal"
         android:contentDescription="Delete lutemon" />
 
