@@ -19,7 +19,7 @@ public class LutemonStatisticActivity extends AppCompatActivity {
     // Intent extras
     public static final String EXTRA_LUTEMON_ID = "extra_lutemon_id";
     private ImageView statisticViewImage, statisticViewElement;
-    private TextView statisticViewName, statisticViewAttack, statisticViewHealth, statisticViewDefence, statisticViewExp, abilityName1, abilityName2, abilityDesc1, abilityDesc2;
+    private TextView statisticViewName, statisticViewAttack, statisticViewHealth, statisticViewDefence, statisticViewExp, statisticViewWins, statisticViewLosses, statisticViewTrainings, abilityName1, abilityName2, abilityDesc1, abilityDesc2;
     private FloatingActionButton backButton, deleteButton;
     private Lutemon lutemon;
 
@@ -34,12 +34,17 @@ public class LutemonStatisticActivity extends AppCompatActivity {
         statisticViewHealth = findViewById(R.id.statisticViewHealth);
         statisticViewDefence = findViewById(R.id.statisticViewDefence);
         statisticViewExp = findViewById(R.id.statisticViewExp);
+        statisticViewWins = findViewById(R.id.statisticViewWins);
+        statisticViewLosses = findViewById(R.id.statisticViewLosses);
+        statisticViewTrainings = findViewById(R.id.statisticViewTrainings);
+
         backButton = findViewById(R.id.statisticViewBackButton);
         deleteButton = findViewById(R.id.statisticViewDeleteButton);
         abilityName1 = findViewById(R.id.statisticViewText1);
         abilityDesc1 = findViewById(R.id.statisticViewText2);
         abilityName2 = findViewById(R.id.statisticViewText3);
         abilityDesc2 = findViewById(R.id.statisticViewText4);
+
 
         displayLutemonDetails();
 
@@ -82,6 +87,10 @@ public class LutemonStatisticActivity extends AppCompatActivity {
             statisticViewHealth.setText(currentHealth);
             statisticViewDefence.setText(String.valueOf(lutemon.getDefense()));
             statisticViewExp.setText(String.valueOf(lutemon.getExperience()));
+            statisticViewWins.setText(String.valueOf(lutemon.getWins()));
+            statisticViewLosses.setText(String.valueOf(lutemon.getLosses()));
+            statisticViewTrainings.setText(String.valueOf(lutemon.getTrainingStat()));
+
 
             // Load image
             try {
