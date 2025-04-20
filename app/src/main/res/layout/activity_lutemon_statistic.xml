@@ -196,9 +196,8 @@
                 android:id="@+id/firstRow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".MainActivity">
+                android:layout_marginTop="24dp">
 
-                <!-- First Row: Labels -->
 
                 <TextView
                     android:id="@+id/winsText"
@@ -253,10 +252,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/secondRow"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".MainActivity">
+                android:layout_height="match_parent">
 
-            <!-- Second Row: Values -->
 
                 <TextView
                     android:id="@+id/statisticViewWins"
