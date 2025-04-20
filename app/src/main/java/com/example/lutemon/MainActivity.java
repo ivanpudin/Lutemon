@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements CurrencyManager.C
             else if (itemId==R.id.trainingGround) {
                 replaceFragment(new TrainingGroundFragment());
             } else if (itemId == R.id.battleArena) {
-                replaceFragment(new BattleArenaFragment());
+                replaceFragment(new LutemonSelectionFragment());
             }
 
             return true;
